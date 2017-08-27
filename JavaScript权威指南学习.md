@@ -745,3 +745,724 @@ p = JSON.parse(s); // p is a deep copy of o
 可以对数字、日期、时间作本地换转换
 
 ### 第七章 数组
+
+7.1 创建数组
+```
+var undefs = [,,] //两个元素,都是undefined
+```
+7.2数组元素的读和写
+
+唯一特别之处在于，当使用小于2^32的非负整数作为属性名时数组会自动维护其length属性值。
+```
+x = [1];
+x[1.2] = 2;
+x[-1] = -1
+x['haha'] = 'haha'
+x.length ;// 1
+用for..in..全部找出来
+用for i=0; i< ..; i++ 只能找出来整数属性的值
+```
+
+
+7.3稀疏数组
+
+(浏览器实现不同...)
+不连续索引的数组
+```
+x1 = [,,,];
+x2 = new Array(3);
+0 in x1; //false
+0 in x2; //false
+
+
+```
+7.4数组长度
+```
+a = [1,2,3,4,5]; // Start with a 5-element array.
+a.length = 3; // a is now [1,2,3].
+a.length = 0; // Delete all elements. a is [].
+a.length = 5; // Length is 5, but no elements, like new Array(5)
+```
+7.5数组元素的添加和删除
+
+unshift(),首部插入元素 shift()头部删除一个
+pop()尾部删除一个
+
+delete删除元素
+```
+a = [1,2,3];
+delete a[1]; // a now has no element at index 1
+1 in a // => false: no array index 1 is defined
+a.length // => 3: delete does not affect array length
+```
+7.6数组遍历
+
+len = arr.length //性能优化
+
+for..in..会遍历继承来的属性以及非整数属性，所以使用应该小心,并且顺序不保证
+
+如判断继承x.hasOwnProperty(i)..
+
+判断非负整数：Math.floor(Math.abs(Number(i))) !== i
+```
+x = [0,1,null,undefined,,]
+
+for (i = 0; i < 5; i++) {
+	console.log(x[i])
+}
+//0,1,null,undefined,undefined,
+for (i in x) {
+	console.log(i, x[i])
+}
+//0,1,null,undefined
+```
+
+7.7数组方法
+
+7.7.1 join()
+
+将数组所有元素化为字符串拼接在一起，返回生成的字符串，不改变原数组
+
+不放参数，则用,隔开
+```
+var a = [1, 2, 3]; // Create a new array with these three elements
+a.join(); // => "1,2,3"
+a.join(" "); // => "1 2 3"
+a.join(""); // => "123"
+var b = new Array(10); // An array of length 10 with no elements
+b.join('-') // => '---------': a string of 9 hyphens
+```
+7.7.2 reverse()
+
+直接更改原数组
+```
+var a = [1,2,3];
+a.reverse().join() // => "3,2,1" and a is now [3,2,1]
+```
+
+7.8.3 sort()
+
+原数组排序后，返回排序后的数组，会改变原数组
+
+(1).不带参数时,以字母表顺序排序，若包含undefined,放尾部,大写字母排小写字母前面,看清楚不是按照数字大小排序的
+
+```
+    var a = [undefined,11,2,-10,'a','b','A','ab']
+    a.sort() 
+    //  [-10, 11, 2, "A", "a", "ab", "b", undefined]
+```
+(2).带参数
+
+传入一个比较函数，第一个参数应该在前,则返回一个小于0的数..
+```
+a.sort(function(a,b){return a-b})//顺序排序
+//[-10, 2, 11, "A", "a", "ab", "b", undefined]
+```
+7.8.4 concat()
+
+创建并返回一个新数组，元素或数组里的接在后面,但数组里的数组依旧是数组
+
+```
+var a = [1,2,3,4,5]; 
+a.concat(3,4,5) //[1, 2, 3, 4, 5, 3, 4, 5]
+a.concat([3,4,5]) //[1, 2, 3, 4, 5, 3, 4, 5]
+a.concat([3,4,[5,[6,7]]) //[1, 2, 3, 4, 5, 3, 4, 5,[6,7]]
+```
+7.8.5 slice(a,b)
+
+创建并返回一个新数组,不改变原数组
+
+a,b为负数就加上数组长度
+```
+var a = [1,2,3,4,5];
+a.slice(3); // Returns [4,5]
+a.slice(1,-1); // Returns [2,3,4]
+a.slice(-3,-2); // Returns [3]
+```
+7.8.6 splice(a,b,c)
+
+直接修改原数组
+```
+var a = [1,2,3,4,5,6,7,8];
+a.splice(4); // Returns [5,6,7,8]; a is [1,2,3,4]
+a.splice(1,2); // Returns [2,3]; a is [1,4]
+a.splice(1,1); // Returns [4]; a is [1]
+
+会直接插入数组之类的
+var a = [1,2,3,4,5];
+a.splice(2,0,'a','b'); // Returns []; a is [1,2,'a','b',3,4,5]
+a.splice(2,2,[1,2],3); // Returns ['a','b']; a is [1,2,[1,2],3,3,4,5]
+```
+7.8.7 push() and pop()
+
+push()尾部增加一个或多个元素,返回新的数组长度
+
+pop() 删除数组最后一个元素，返回删除的值
+
+```
+x = []
+x.push(1,2,[4,5]) //3
+x.pop() // [4,5]
+```
+7.8.8 unshift() 和 shift()
+
+类似上面,改为头部,注意多个参数的插入顺序
+```
+var a = []; // a:[]
+a.unshift(1); // a:[1] Returns: 1
+a.unshift(22); // a:[22,1] Returns: 2
+a.shift(); // a:[1] Returns: 22
+a.unshift(3,[4,5]); // a:[3,[4,5],1] Returns: 3
+a.shift(); // a:[[4,5],1] Returns: 3
+a.shift(); // a:[1] Returns: [4,5]
+a.shift(); // a:[] Returns: 1
+```
+7.8.9 toString() toLocaleString()
+
+和不带参数的join()一样
+
+7.9 ES5 数组方法
+都不会修改原数组，callback修改不算
+
+遍历、映射、过滤、检测、简化、搜索
+
+7.9.1 forEach()
+
+
+从头到尾遍历数组,为每个元素调用指定的函数，第一个参数为该函数，若有第二个参数，则为this
+
+function()里的三个参数分别是 value,i,arr
+```
+var data = [1,2,3,4,5]; 
+var sum = 0;
+data.forEach(function(value) { sum += value; }); // Add each value to sum
+sum // => 15
+
+// Now increment each array element
+data.forEach(function(v, i, a) { a[i] = v + 1; });
+data // => [2,3,4,5,6]
+```
+7.9.2 map()
+并不会修改原数组
+
+调用数组的每个元素传递给指定的函数,并返回一个新数组，它包含函数的返回值，
+
+arr.map(function callback(currentValue, index, array) { 
+    
+}[, thisArg])
+
+
+```
+
+a = [1, 2, 3];
+b = a.map(function(x) { return x*x; }); // b is [1, 4, 9]
+
+var numbers = [1, 4, 9];
+var roots = numbers.map(Math.sqrt); //[1, 2, 3]
+
+注意下面这个:
+["1", "2", "3"].map(parseInt);// 但实际的结果是 [1, NaN, NaN]
+map中的callback函数只需要接受一个参数,但是并不意味着map只给callback传了一个参数，
+这里实际上传入了第二个参数作为parseInt()的第二个参数作为进制数
+
+``` 
+
+7.9.3 filter()
+
+返回新数组
+var new_array = arr.filter(callback[, thisArg])
+
+callback
+用来测试数组的每个元素的函数。调用时使用参数 (element, index, array)。
+返回true表示保留该元素（通过测试），false则不保留。
+
+```
+a = [5, 4, 3, 2, 1];
+smallvalues = a.filter(function(x) { return x < 3 }); // [2, 1]
+every
+```
+
+7.9.4 every() and some()
+
+对数组的逻辑判定，返回true,false
+
+every判断所有元素，只有都true,才返回true;
+
+some()判断存在，只要一个存在就true:
+
+```
+a = [1,2,3,4,5];
+a.every(function(x) { return x < 10; }) // => true: 
+a.every(function(x) { return x % 2 === 0; }) // => false: 
+
+a = [1,2,3,4,5];
+a.some(function(x) { return x%2===0; }) // => true a has some even numbers.
+a.some(isNaN) // => false
+```
+7.9.5 reduce()和reduceRight()
+
+用指定的函数将数组元素进行组合，生成单个值
+
+arr.reduce(callback[, initialValue])
+
+callback中(accumulator,value,index,arr) 第一个参数为每一轮累积的结果，最后结果return 一个单值
+
+reduceRight()从右边开始处理数组
+```
+var a = [1, 2, 3, 4, 5]
+var sum = a.reduce(function(x, y) {
+	return x + y
+}, 0); // Sum of values
+var product = a.reduce(function(x, y) {
+	return x * y
+}, 1); // Product of values
+var max = a.reduce(function(x, y) {
+	return (x > y) ? x : y;
+}); // Largest value
+
+var a = [2, 3, 4]
+	// Compute 2^(3^4). Exponentiation has right-to-left precedence
+var big = a.reduceRight(function(accumulator, value) {
+	return Math.pow(value, accumulator);
+});
+
+特别用法算并集 
+var objects = [{x:1,a:1}, {y:2,a:2}, {z:3,a:3}];
+var leftunion = objects.reduce(union); // {x:1, y:2, z:3, a:1}
+var rightunion = objects.reduceRight(union); // {x:1, y:2, z:3, a:3}
+
+```
+7.9.6 indexOf() lastIndexOf()
+
+找到第一个具有给定值的元素，返回索引，没找到返回-1.
+
+第二个参数是可选的，指定从哪里开始搜索，lastIndexOf()倒着搜索的
+
+```
+a = [0,1,2,1,0];
+a.indexOf(1) // => 1
+a.lastIndexOf(1) // => 3
+a.indexOf(3) // => -1
+
+字符串也有这两个方法
+```
+7.10 数组类型
+
+判断数组
+
+Array.isArray()
+
+x.constructor === Array  //true
+
+不那么可靠的 [] instanceof Array
+
+ES3兼容性:
+
+```
+var isArray = Array.isArray || function(0){
+    return typeof 0 === 'object' &&
+    object.prototype.toString.call(0) === '[object Array]';
+}
+
+
+不那么稳定..
+```
+7.11 类数组对象
+
+2^32=>length>=0,且length为整数，非负数整数属性,typeof结果是'object'
+
+判断类数组：
+```
+function isArrayLike(o) {
+	if (o && // o is not null, undefined, etc.
+		typeof o === "object" && // o is an object
+		isFinite(o.length) && // o.length is a finite number
+		o.length >= 0 && // o.length is non-negative
+		o.length === Math.floor(o.length) && // o.length is an integer
+		o.length < 4294967296) // o.length < 2^32
+		return true; // Then o is array-like
+	else
+		return false; // Otherwise it is not
+}
+```
+使用数组的方法：
+```
+var a = {"0":"a", "1":"b", "2":"c", length:3}; // An array-like object
+Array.prototype.join.call(a, "+") // => "a+b+c"
+Array.prototype.slice.call(a, 0) // => ["a","b","c"]: true array copy
+Array.prototype.map.call(a, function(x) {
+return x.toUpperCase();
+}) // => ["A","B","C"]:
+```
+
+7.12 作为数组的字符串
+
+字符串行为类似于只读的数组
+```
+s = "JavaScript"
+Array.prototype.join.call(s, " ") // => "J a v a S c r i p t"
+Array.prototype.filter.call(s, // Filter the characters of the string
+		function(x) {
+			return x.match(/[^aeiou]/); // Only match nonvowels
+		}).join("") // => "JvScrpt
+```
+
+### 第八章 函数
+
+8.2函数调用
+
+8.2.1 函数里的函数里的this 指向window 或 undefined(strict)
+
+```
+var o = { // An object o.
+	m: function() { 
+		var self = this; // Save the this value in a variable.
+		console.log(this === o); // Prints "true"
+		
+		f(); // Now call the helper function f().
+		function f() { // A nested function f
+			console.log(this === o); // "false": this is global or undefined
+		}
+	}
+};
+```
+
+8.2.2 构造函数调用
+
+var o = new Foo() 
+
+创建一个新对象，
+
+这个对象的prototype就是构造函数的prototype，
+
+this指向这个对象,
+
+运行构造函数,如果没有return ,则return这个新对象,如果有return newO,则返回newO
+
+注意Foo这个构造函数有return 返回一个对象，那么最后o的值就是这个对象。
+
+8.3.1可选形参，放最后
+```
+function getPropertyNames(o, /* optional */ a) {
+	if (a === undefined) a = []; // If undefined, use a new array
+	for (var property in o) a.push(property);
+	return a;
+}
+// This function can be invoked with 1 or 2 arguments:
+var a = getPropertyNames(o); // Get o's properties into a new array
+getPropertyNames(p, a); 
+```
+8.3.2 实参对象
+
+arguments,
+
+尽量不用下面两个，严格模式下都是错的
+caller,指代调用当前正在执行的函数的函数
+
+callee  指代当前正在执行的函数
+
+匿名函数中通过callee来递归地调用自身
+```
+var factorial = function(x) {
+    if (x < 1) return 1;
+    return x * arguments.callee(x-1);
+}
+```
+8.3.3 将对象属性用作实参
+
+传入对象，用对象属性来作为参数，不用记参数的顺序
+
+8.3.4 实参类型
+
+传入实参后进行类型检查 
+```
+function sum(a) {
+	if (isArrayLike(a)) {
+		var total = 0;
+		for (var i = 0; i < a.length; i++) { // Loop though all elements
+			var element = a[i];
+			if (element == null) continue; // Skip null and undefined
+			if (isFinite(element)) total += element;
+			else throw new Error("sum(): elements must be finite numbers");
+		}
+		return total;
+	} else throw new Error("sum(): argument must be array-like");
+}
+```
+8.4作为值的函数
+
+自定义函数的属性，用来保存一些跟着函数变的值
+
+```
+function factorial(n) {
+	if (isFinite(n) && n > 0 && n == Math.round(n)) { // Finite, positive ints only
+		if (!(n in factorial)) // If no cached result
+			factorial[n] = n * factorial(n - 1); // Compute and cache it
+		return factorial[n]; // Return the cached result
+	} else return NaN; // If input was bad
+}
+factorial[1] = 1; 
+```
+8.5 作为命名空间的函数
+
+```
+var extend = (function(){
+    if(){return }
+    else return ...
+}())
+```
+8.6闭包
+
+如果将一个局部变量看作是自定义实现的对象的属性的话，
+
+作用域链：每一段JS代码都有一个与之关联的作用域链，它是一个对象列表或链表，这组对象定义了这段代码‘作用域中’的变量，当JS需要查找变量X时，会从链中的第一个对象开始寻找...
+
+作用域链上有两个对象，一个全局对象，一个是定义函数参数和局部变量的对象，嵌套中定义一个函数时，实际上保存了一个作用域链，当调用这个函数时，创建一个新的对象来存储它的局部变量，并把这个新对象添加到刚保存的作用域链上，这个链就更长了
+
+
+在JS中函数的执行依赖于变量作用域,这个作用域是在函数定义时决定的，为了实现这种词法作用域，函数对象的内部状态不仅包括了代码逻辑，还包括了引用当前的作用域链。
+
+闭包：函数对象可以通过作用域链关联起来，函数体内的变量可都可以保存在函数作用域链内，链下端的可以访问链上方的变量~ 这个就叫闭包
+
+setTimeout..
+
+共享私有状态
+
+8.7 函数属性、方法和构造函数
+
+8.7.1 length 属性
+
+arguments.length表示传入函数的实参的个数
+
+arguments.callee.length :函数的length属性是只读属性,表示定义时的参数个数
+
+8.7.3 call()方法和apply()方法
+
+对象调用不属于它的函数
+
+call(obj,1,2..)  apply(obj,[1,2])
+
+类数组也可以传入apply ，如arguments
+
+```
+fun.apply(thisArg, [argsArray]) 
+function.call(thisArg, arg1, arg2, …) 
+fun.bind(thisArg[, arg1[, arg2[, …]]])
+
+call与apply的区别在于,传递参数的方式 
+bind与他们的区别是,bind是返回这个函数的copy，而call与apply是直接执行
+```
+
+8.7.4 bind ()方法
+
+将函数绑定给某个对象，返回一个新的函数,并且传入bind()的实参也会绑定到this，称为柯里化
+
+```
+function f(y) { return this.x + y; } 
+var o = { x : 1 }; // An object we'll bind to
+var g = f.bind(o); // Calling g(x) invokes o.f(x)
+g(2) // => 3
+```
+
+实参也会绑定到this，称为柯里化
+```
+var sum = function(x, y) {
+	return x + y
+};
+
+var succ = sum.bind(null, 1);
+succ(2) // => 3: x is bound to 1, and we pass 2 for the y argument
+
+function f(y, z) {
+	return this.x + y + z
+}; // Another function that adds
+var g = f.bind({
+	x: 1
+}, 2); // Bind this and y
+g(3) // => 6: this.x is bound to 1, y is bound to 2 and z is 3
+```
+
+如何模拟实现标准的bind()方法? 柯里化+绑定this
+
+注意，用bind()返回的函数并不包含prototype属性,并且可以用作构造函数,用作构造函数时,传入的this无效
+```
+if (!Function.prototype.bind) {
+	Function.prototype.bind = function (o /*,args*/) {
+		var self = this, boundArgs = arguments;
+		return function () {
+			var args = [],i;
+			for(i = 0; i < boundArgs.length; i++) {
+				args.push(boundArgs[i])
+			}
+			for (i = 0; i < arguments.length; i++) {
+				args.push(arguments[i])
+			}
+			return self.apply(o,args);
+		}
+	}
+}
+```
+8.7.6Function 构造函数
+
+
+```
+var f = new Function('x','y','return x*y');
+var f = function (x,y) {return x*y}
+```
+
+注意一点:Function动态创建并编译函数，它并不是使用词法作用域，相反总是在全局作用域中执行
+
+```
+var scope = "global";
+
+function constructFunction() {
+	var scope = "local";
+	return new Function("return scope"); // Does not capture the local scope!
+}
+// This line returns "global" because the function returned by the
+// Function() constructor does not use the local scope.
+constructFunction()(); // => "global"
+```
+判断函数：
+```
+function isFunction(x) {
+    return Object.prototype.toString.call(x) === '[object Function]'
+}
+```
+
+8.8函数式编程
+
+8.8.1使用函数处理数组
+
+用map和reduce计算平均数和标准差
+```
+var sum = function(x,y){return x+y}
+var square = function(x) {return x*x}
+
+var data = [1,1,3,5,5]
+
+var mean = data.reduce(sum)/data.length;
+var deviations = data.map(function(x){return x-mean})
+var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1))
+```
+
+ES3实现map(),reduce()函数：
+```
+map(arr,function) ~:
+//如果Array.prototype.map定义了的话，用这个方法
+
+var map = Array.prototype.map 
+	? function(a,f) {return a.map(f)}
+	: function(a,f) {
+		var results = [];
+		for (var i = 0, len = a.length; i < len; i++) {
+			if (i in a) results[i] = f.call(null,a[i],i,a);
+		}
+		return results;
+	}
+
+var reduce = Array.prototype.reduce 
+	? function(a,f,initial) {
+		if (arguments.length > 2) return a.reduce(f,initial);
+		else return a.reduce(f);
+	}
+	: function(a,f,initial) {
+		var i = 0, len =a.length, accumulator;
+		if(arguments.length > 2) accumulator = initial;
+		else {//找到数组中第一个已定义的索引
+			if (len == 0) throw TypeError();
+			while(i < len) {
+				if (i in a) {
+					accumulator = a[i++];
+					breakl
+				} else i++;
+			}
+			if (i == len) throw TypeError();
+		}
+		while (i < len) {
+			if (i in a) {
+				accumulator = f.call(undefined,accumulator,a[i],i,a);
+			}
+			i++;
+		}
+		return accumulator;
+	}
+
+```
+
+8.8.2高阶函数
+
+高阶函数就是操作函数的函数
+```
+function compose(f, g) {
+	return function() {
+		return f.call(this, g.apply(this, arguments));
+	};
+}
+var square = function(x) {
+	return x * x;
+};
+var sum = function(x, y) {
+	return x + y;
+};
+var squareofsum = compose(square, sum);
+squareofsum(2, 3) // => 25
+```
+
+8.8.3不完全函数
+
+期待传入的参数按照自己的意愿排在特定的位置：
+```
+工具函数将类数组对象转化为真正的数组
+并且应用slice来确定特定的arguments
+function array(a, n) {
+	return Array.prototype.slice.call(a, n || 0);
+}
+
+// The arguments to this function are passed on the left
+function partialLeft(f /*, ...*/ ) {
+	var args = arguments; // Save the outer arguments array
+	return function() { // And return this function
+		var a = array(args, 1); // Start with the outer args from 1 on.
+		a = a.concat(array(arguments)); // Then add all the inner arguments.
+		return f.apply(this, a); 
+	};
+}
+
+// The arguments to this function are passed on the right
+function partialRight(f /*, ...*/ ) {
+	var args = arguments; // Save the outer arguments array
+	return function() { // And return this function
+		var a = array(arguments); // Start with the inner arguments.
+		a = a.concat(array(args, 1)); // Then add the outer args from 1 on.
+		return f.apply(this, a); // Then invoke f on that argument list.
+	};
+}
+```
+
+8.8.4 记忆
+
+牺牲空间复杂度获取更优的时间复杂度
+
+```
+function memorize(f) {
+	var cache = {}; //缓存结果
+	return function() {
+		var key = arguments.length + Array.prototype.join.call(arguments,',');
+		if (key in cache) return cache[key];
+		else return cache[key] = f.apply(this,arguments)
+	}
+}
+
+//返回两个整数的最大公约数
+//欧几里德算法
+function gcd(a,b) {
+	var t;
+	if (a < b) t=b,b=a,a=t; //确保a>=b
+	while (b != 0) t=b,b=a%b,a=t;
+	return a;
+}
+
+var gcdmemo = memorize(gcd);
+gcdmemo(85,187)  //17
+```
