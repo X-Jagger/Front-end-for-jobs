@@ -1466,3 +1466,101 @@ function gcd(a,b) {
 var gcdmemo = memorize(gcd);
 gcdmemo(85,187)  //17
 ```
+
+第9章 类和模块
+
+9.2 类和构造函数
+
+重写Range.prototype,这个新对象不包含constructor对象，补救措施：
+
+```
+方法一： 自定义constructor
+Range.prototype = {
+	constructor: Range, // Explicitly set the constructor back-reference
+	includes: function(x) {
+		return this.from <= x && x <= this.to;
+	},
+	foreach: function(f) {
+		for (var x = Math.ceil(this.from); x <= this.to; x++) f(x);
+	},
+	toString: function() {
+		return "(" + this.from + "..." + this.to + ")";
+	}
+};
+
+方法二  利用预定义的原型对象
+// the automatically created Range.prototype.constructor property.
+Range.prototype.includes = function(x) {
+	return this.from <= x && x <= this.to;
+};
+Range.prototype.foreach = function(f) {
+	for (var x = Math.ceil(this.from); x <= this.to; x++) f(x);
+};
+Range.prototype.toString = function() {
+	return "(" + this.from + "..." + this.to + ")";
+};
+```
+9.5 类和类型
+
+如何检测类？
+
+9.5.1 instanceof 运算符
+
+法1：
+obj instanceof Function 
+
+直接检测obj是不是继承自Function.prototype.prototype...
+
+法2:
+Function.prototype.isPrototypeOf(obj)
+
+注：不同Web框架页面不是同样的原型对象
+
+9.5.2 constructor属性
+
+```
+function typeAndValue(x) {
+	if (x == null) return ""; // Null and undefined don't have constructors
+	switch (x.constructor) {
+		case Number:
+			return "Number: " + x; // Works for primitive types
+		case String:
+			return "String: '" + x + "'";
+		case Date:
+			return "Date: " + x; // And for built-in types
+		case RegExp:
+			return "Regexp: " + x;
+		case Complex:
+			return "Complex: " + x; // And for user-defined types
+	}
+}
+```
+9.5.3 万能判断！ 
+
+万能判断！ 包括构造函数的名字
+
+如果不需要包括构造函数的名字直接用简单版本：
+```
+function classOf(o) {
+    if(o !== o) return 'NaN';
+    return Object.prototype.toString.call(o).slice(8,-1)
+}
+```
+
+```
+结果都是大写的,判断对象,包括构造函数的名字
+function foo(){} 这样的构造函数
+
+foo = function(){} 这样的构造函数没有名字
+
+function classOf(o) {
+    if(o !== o) return 'NaN';
+    if(o === null) return 'Null'
+    if(o === undefined) return 'Undefined';
+    if(o.constructor != Object) return o.constructor.toString().match(/function\s*([^(]*)\(/)[1];
+    return Object.prototype.toString.call(o).slice(8,-1)
+}
+```
+
+9.5.4 鸭式辩型
+
