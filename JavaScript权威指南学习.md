@@ -159,16 +159,16 @@ x.b == y.b //true
 (1)遍历对象,递归
 这个函数数组、对象都可以深复制
 function deepClone(old, new) {
-	new = new || (old.constructor === Array ? [] : {});
-	for (var i in old) {
-		if (typeof old[i] === 'object') {
-			new[i] = (old[i].constructor === Array) ? [] : {};
-			deepClone(old[i], new[i])
-		} else {
-			new[i] = old[i]
-		}
-	}
-	return new;
+    new = new || (old.constructor === Array ? [] : {});
+    for (var i in old) {
+        if (typeof old[i] === 'object') {
+            new[i] = (old[i].constructor === Array) ? [] : {};
+            deepClone(old[i], new[i])
+        } else {
+            new[i] = old[i]
+        }
+    }
+    return new;
 }
 y = deepClone(x)
 
@@ -330,13 +330,13 @@ var data = [7,8,9]; // An array with elements 0, 1, and 2
 ES5严格模式下，可以查询更改局部变量，不能定义新的变量或函数
 ```
 anged';"); // Direct eval sets local variable
-	return x; // Return changed local variable
+    return x; // Return changed local variable
 }
 
 function g() { // This function does a global eval
-	var y = "local"; // A local variable
-	geval("y += 'changed';"); // Indirect eval sets global variable
-	return y; // Return unchanged local variable
+    var y = "local"; // A local variable
+    geval("y += 'changed';"); // Indirect eval sets global variable
+    return y; // Return unchanged local variable
 }
 console.log(f(), x); // Local variable changed: prints "localchanged global":
 console.log(g(), y); // Global variable changed: prints "local globalchanged":
@@ -493,15 +493,15 @@ var o = Objeect.create(null) // 0 不继承任何属性和方法
 ```
 兼容性继承函数，原型继承创建一个新对象
 function inherit(p) {
-	if (p == null) throw TypeError(); // p must be a non-null object
-	if (Object.create) // If Object.create() is defined...
-		return Object.create(p); // then just use it.
-	var t = typeof p; // Otherwise do some more type checking
-	if (t !== "object" && t !== "function") throw TypeError();
+    if (p == null) throw TypeError(); // p must be a non-null object
+    if (Object.create) // If Object.create() is defined...
+        return Object.create(p); // then just use it.
+    var t = typeof p; // Otherwise do some more type checking
+    if (t !== "object" && t !== "function") throw TypeError();
 
-	function f() {}; // Define a dummy constructor function.
-	f.prototype = p; // Set its prototype property to p.
-	return new f(); // Use f() to create an "heir" of p.
+    function f() {}; // Define a dummy constructor function.
+    f.prototype = p; // Set its prototype property to p.
+    return new f(); // Use f() to create an "heir" of p.
 }
 ```
 6.2属性的查询和设置
@@ -551,10 +551,10 @@ var o = { x: 1 , b : undefined}
 fro .. in ..
 ```
 for (p in o) {
-	if (!o.hasOwnProperty(p)) continue; // Skip inherited properties
+    if (!o.hasOwnProperty(p)) continue; // Skip inherited properties
 }
 for (p in o) {
-	if (typeof o[p] === "function") continue; // Skip methods
+    if (typeof o[p] === "function") continue; // Skip methods
 }
 ```
 ES5
@@ -570,23 +570,23 @@ Object.getOwnPropertyNames(0) //返回所有自有属性的名称的数组
 对象直接量定义：
 ```
 var p = {
-	// x and y are regular read-write data properties.
-	x: 1.0,
-	y: 1.0,
-	// r is a read-write accessor property with getter and setter.
-	// Don't forget to put a comma after accessor methods.
-	get r() {
-		return Math.sqrt(this.x * this.x + this.y * this.y);
-	},
-	set r(newvalue) {
-		var oldvalue = Math.sqrt(this.x * this.x + this.y * this.y);
-		var ratio = newvalue / oldvalue;
-		this.x *= ratio;
-		this.y *= ratio;
-	}, // theta is a read-only accessor property with getter only.
-	get theta() {
-		return Math.atan2(this.y, this.x);
-	}
+    // x and y are regular read-write data properties.
+    x: 1.0,
+    y: 1.0,
+    // r is a read-write accessor property with getter and setter.
+    // Don't forget to put a comma after accessor methods.
+    get r() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    },
+    set r(newvalue) {
+        var oldvalue = Math.sqrt(this.x * this.x + this.y * this.y);
+        var ratio = newvalue / oldvalue;
+        this.x *= ratio;
+        this.y *= ratio;
+    }, // theta is a read-only accessor property with getter only.
+    get theta() {
+        return Math.atan2(this.y, this.x);
+    }
 };
 
 读取：p.r
@@ -615,31 +615,31 @@ Object.getOwnPropertyDescriptor({x:1}, "x");
 ar o = {}; // Start with no properties at all
 // Add a nonenumerable data property x with value 1.
 Object.defineProperty(o, "x", {
-	value: 1,
-	writable: true,
-	enumerable: false,
-	configurable: true
+    value: 1,
+    writable: true,
+    enumerable: false,
+    configurable: true
 });
 // Check that the property is there but is nonenumerable
 o.x; // => 1
 Object.keys(o) // => []
-	// Now modify the property x so that it is read-only
+    // Now modify the property x so that it is read-only
 Object.defineProperty(o, "x", {
-	writable: false
+    writable: false
 });
 // Try to change the value of the property
 o.x = 2; // Fails silently or throws TypeError in strict mode
 o.x // => 1
-	// The property is still configurable, so we can change its value like this:
+    // The property is still configurable, so we can change its value like this:
 Object.defineProperty(o, "x", {
-	value: 2
+    value: 2
 });
 o.x // => 2
-	// Now change x from a data property to an accessor property
+    // Now change x from a data property to an accessor property
 Object.defineProperty(o, "x", {
-	get: function() {
-		return 0;
-	}
+    get: function() {
+        return 0;
+    }
 });
 o.x // => 0
 ```
@@ -653,25 +653,25 @@ o.x // => 0
 
 ```
 Object.defineProperty(Object.prototype,
-	"extend", // Define Object.prototype.extend
-	{
-		writable: true,
-		enumerable: false, // Make it nonenumerable
-		configurable: true,
-		value: function(o) { // Its value is this function
-			// Get all own props, even nonenumerable ones
-			var names = Object.getOwnPropertyNames(o);
-			// Loop through them
-			for (var i = 0; i < names.length; i++) {
-				// Skip props already in this object
-				if (names[i] in this) continue;
-				// Get property description from o
-				var desc = Object.getOwnPropertyDescriptor(o, names[i]);
-				// Use it to create property on this
-				Object.defineProperty(this, names[i], desc);
-			}
-		}
-	});
+    "extend", // Define Object.prototype.extend
+    {
+        writable: true,
+        enumerable: false, // Make it nonenumerable
+        configurable: true,
+        value: function(o) { // Its value is this function
+            // Get all own props, even nonenumerable ones
+            var names = Object.getOwnPropertyNames(o);
+            // Loop through them
+            for (var i = 0; i < names.length; i++) {
+                // Skip props already in this object
+                if (names[i] in this) continue;
+                // Get property description from o
+                var desc = Object.getOwnPropertyDescriptor(o, names[i]);
+                // Use it to create property on this
+                Object.defineProperty(this, names[i], desc);
+            }
+        }
+    });
 ```
 6.8对象的三个属性
 
@@ -808,11 +808,11 @@ for..in..会遍历继承来的属性以及非整数属性，所以使用应该�
 x = [0,1,null,undefined,,]
 
 for (i = 0; i < 5; i++) {
-	console.log(x[i])
+    console.log(x[i])
 }
 //0,1,null,undefined,undefined,
 for (i in x) {
-	console.log(i, x[i])
+    console.log(i, x[i])
 }
 //0,1,null,undefined
 ```
@@ -1011,19 +1011,19 @@ reduceRight()从右边开始处理数组
 ```
 var a = [1, 2, 3, 4, 5]
 var sum = a.reduce(function(x, y) {
-	return x + y
+    return x + y
 }, 0); // Sum of values
 var product = a.reduce(function(x, y) {
-	return x * y
+    return x * y
 }, 1); // Product of values
 var max = a.reduce(function(x, y) {
-	return (x > y) ? x : y;
+    return (x > y) ? x : y;
 }); // Largest value
 
 var a = [2, 3, 4]
-	// Compute 2^(3^4). Exponentiation has right-to-left precedence
+    // Compute 2^(3^4). Exponentiation has right-to-left precedence
 var big = a.reduceRight(function(accumulator, value) {
-	return Math.pow(value, accumulator);
+    return Math.pow(value, accumulator);
 });
 
 特别用法算并集 
@@ -1074,15 +1074,15 @@ var isArray = Array.isArray || function(0){
 判断类数组：
 ```
 function isArrayLike(o) {
-	if (o && // o is not null, undefined, etc.
-		typeof o === "object" && // o is an object
-		isFinite(o.length) && // o.length is a finite number
-		o.length >= 0 && // o.length is non-negative
-		o.length === Math.floor(o.length) && // o.length is an integer
-		o.length < 4294967296) // o.length < 2^32
-		return true; // Then o is array-like
-	else
-		return false; // Otherwise it is not
+    if (o && // o is not null, undefined, etc.
+        typeof o === "object" && // o is an object
+        isFinite(o.length) && // o.length is a finite number
+        o.length >= 0 && // o.length is non-negative
+        o.length === Math.floor(o.length) && // o.length is an integer
+        o.length < 4294967296) // o.length < 2^32
+        return true; // Then o is array-like
+    else
+        return false; // Otherwise it is not
 }
 ```
 使用数组的方法：
@@ -1102,9 +1102,9 @@ return x.toUpperCase();
 s = "JavaScript"
 Array.prototype.join.call(s, " ") // => "J a v a S c r i p t"
 Array.prototype.filter.call(s, // Filter the characters of the string
-		function(x) {
-			return x.match(/[^aeiou]/); // Only match nonvowels
-		}).join("") // => "JvScrpt
+        function(x) {
+            return x.match(/[^aeiou]/); // Only match nonvowels
+        }).join("") // => "JvScrpt
 ```
 
 ### 第八章 函数
@@ -1115,15 +1115,15 @@ Array.prototype.filter.call(s, // Filter the characters of the string
 
 ```
 var o = { // An object o.
-	m: function() { 
-		var self = this; // Save the this value in a variable.
-		console.log(this === o); // Prints "true"
-		
-		f(); // Now call the helper function f().
-		function f() { // A nested function f
-			console.log(this === o); // "false": this is global or undefined
-		}
-	}
+    m: function() { 
+        var self = this; // Save the this value in a variable.
+        console.log(this === o); // Prints "true"
+        
+        f(); // Now call the helper function f().
+        function f() { // A nested function f
+            console.log(this === o); // "false": this is global or undefined
+        }
+    }
 };
 ```
 
@@ -1144,9 +1144,9 @@ this指向这个对象,
 8.3.1可选形参，放最后
 ```
 function getPropertyNames(o, /* optional */ a) {
-	if (a === undefined) a = []; // If undefined, use a new array
-	for (var property in o) a.push(property);
-	return a;
+    if (a === undefined) a = []; // If undefined, use a new array
+    for (var property in o) a.push(property);
+    return a;
 }
 // This function can be invoked with 1 or 2 arguments:
 var a = getPropertyNames(o); // Get o's properties into a new array
@@ -1177,16 +1177,16 @@ var factorial = function(x) {
 传入实参后进行类型检查 
 ```
 function sum(a) {
-	if (isArrayLike(a)) {
-		var total = 0;
-		for (var i = 0; i < a.length; i++) { // Loop though all elements
-			var element = a[i];
-			if (element == null) continue; // Skip null and undefined
-			if (isFinite(element)) total += element;
-			else throw new Error("sum(): elements must be finite numbers");
-		}
-		return total;
-	} else throw new Error("sum(): argument must be array-like");
+    if (isArrayLike(a)) {
+        var total = 0;
+        for (var i = 0; i < a.length; i++) { // Loop though all elements
+            var element = a[i];
+            if (element == null) continue; // Skip null and undefined
+            if (isFinite(element)) total += element;
+            else throw new Error("sum(): elements must be finite numbers");
+        }
+        return total;
+    } else throw new Error("sum(): argument must be array-like");
 }
 ```
 8.4作为值的函数
@@ -1195,11 +1195,11 @@ function sum(a) {
 
 ```
 function factorial(n) {
-	if (isFinite(n) && n > 0 && n == Math.round(n)) { // Finite, positive ints only
-		if (!(n in factorial)) // If no cached result
-			factorial[n] = n * factorial(n - 1); // Compute and cache it
-		return factorial[n]; // Return the cached result
-	} else return NaN; // If input was bad
+    if (isFinite(n) && n > 0 && n == Math.round(n)) { // Finite, positive ints only
+        if (!(n in factorial)) // If no cached result
+            factorial[n] = n * factorial(n - 1); // Compute and cache it
+        return factorial[n]; // Return the cached result
+    } else return NaN; // If input was bad
 }
 factorial[1] = 1; 
 ```
@@ -1267,17 +1267,17 @@ g(2) // => 3
 实参也会绑定到this，称为柯里化
 ```
 var sum = function(x, y) {
-	return x + y
+    return x + y
 };
 
 var succ = sum.bind(null, 1);
 succ(2) // => 3: x is bound to 1, and we pass 2 for the y argument
 
 function f(y, z) {
-	return this.x + y + z
+    return this.x + y + z
 }; // Another function that adds
 var g = f.bind({
-	x: 1
+    x: 1
 }, 2); // Bind this and y
 g(3) // => 6: this.x is bound to 1, y is bound to 2 and z is 3
 ```
@@ -1287,19 +1287,19 @@ g(3) // => 6: this.x is bound to 1, y is bound to 2 and z is 3
 注意，用bind()返回的函数并不包含prototype属性,并且可以用作构造函数,用作构造函数时,传入的this无效
 ```
 if (!Function.prototype.bind) {
-	Function.prototype.bind = function (o /*,args*/) {
-		var self = this, boundArgs = arguments;
-		return function () {
-			var args = [],i;
-			for(i = 0; i < boundArgs.length; i++) {
-				args.push(boundArgs[i])
-			}
-			for (i = 0; i < arguments.length; i++) {
-				args.push(arguments[i])
-			}
-			return self.apply(o,args);
-		}
-	}
+    Function.prototype.bind = function (o /*,args*/) {
+        var self = this, boundArgs = arguments;
+        return function () {
+            var args = [],i;
+            for(i = 0; i < boundArgs.length; i++) {
+                args.push(boundArgs[i])
+            }
+            for (i = 0; i < arguments.length; i++) {
+                args.push(arguments[i])
+            }
+            return self.apply(o,args);
+        }
+    }
 }
 ```
 8.7.6Function 构造函数
@@ -1316,8 +1316,8 @@ var f = function (x,y) {return x*y}
 var scope = "global";
 
 function constructFunction() {
-	var scope = "local";
-	return new Function("return scope"); // Does not capture the local scope!
+    var scope = "local";
+    return new Function("return scope"); // Does not capture the local scope!
 }
 // This line returns "global" because the function returned by the
 // Function() constructor does not use the local scope.
@@ -1352,41 +1352,41 @@ map(arr,function) ~:
 //如果Array.prototype.map定义了的话，用这个方法
 
 var map = Array.prototype.map 
-	? function(a,f) {return a.map(f)}
-	: function(a,f) {
-		var results = [];
-		for (var i = 0, len = a.length; i < len; i++) {
-			if (i in a) results[i] = f.call(null,a[i],i,a);
-		}
-		return results;
-	}
+    ? function(a,f) {return a.map(f)}
+    : function(a,f) {
+        var results = [];
+        for (var i = 0, len = a.length; i < len; i++) {
+            if (i in a) results[i] = f.call(null,a[i],i,a);
+        }
+        return results;
+    }
 
 var reduce = Array.prototype.reduce 
-	? function(a,f,initial) {
-		if (arguments.length > 2) return a.reduce(f,initial);
-		else return a.reduce(f);
-	}
-	: function(a,f,initial) {
-		var i = 0, len =a.length, accumulator;
-		if(arguments.length > 2) accumulator = initial;
-		else {//找到数组中第一个已定义的索引
-			if (len == 0) throw TypeError();
-			while(i < len) {
-				if (i in a) {
-					accumulator = a[i++];
-					breakl
-				} else i++;
-			}
-			if (i == len) throw TypeError();
-		}
-		while (i < len) {
-			if (i in a) {
-				accumulator = f.call(undefined,accumulator,a[i],i,a);
-			}
-			i++;
-		}
-		return accumulator;
-	}
+    ? function(a,f,initial) {
+        if (arguments.length > 2) return a.reduce(f,initial);
+        else return a.reduce(f);
+    }
+    : function(a,f,initial) {
+        var i = 0, len =a.length, accumulator;
+        if(arguments.length > 2) accumulator = initial;
+        else {//找到数组中第一个已定义的索引
+            if (len == 0) throw TypeError();
+            while(i < len) {
+                if (i in a) {
+                    accumulator = a[i++];
+                    breakl
+                } else i++;
+            }
+            if (i == len) throw TypeError();
+        }
+        while (i < len) {
+            if (i in a) {
+                accumulator = f.call(undefined,accumulator,a[i],i,a);
+            }
+            i++;
+        }
+        return accumulator;
+    }
 
 ```
 
@@ -1395,15 +1395,15 @@ var reduce = Array.prototype.reduce
 高阶函数就是操作函数的函数
 ```
 function compose(f, g) {
-	return function() {
-		return f.call(this, g.apply(this, arguments));
-	};
+    return function() {
+        return f.call(this, g.apply(this, arguments));
+    };
 }
 var square = function(x) {
-	return x * x;
+    return x * x;
 };
 var sum = function(x, y) {
-	return x + y;
+    return x + y;
 };
 var squareofsum = compose(square, sum);
 squareofsum(2, 3) // => 25
@@ -1416,27 +1416,27 @@ squareofsum(2, 3) // => 25
 工具函数将类数组对象转化为真正的数组
 并且应用slice来确定特定的arguments
 function array(a, n) {
-	return Array.prototype.slice.call(a, n || 0);
+    return Array.prototype.slice.call(a, n || 0);
 }
 
 // The arguments to this function are passed on the left
 function partialLeft(f /*, ...*/ ) {
-	var args = arguments; // Save the outer arguments array
-	return function() { // And return this function
-		var a = array(args, 1); // Start with the outer args from 1 on.
-		a = a.concat(array(arguments)); // Then add all the inner arguments.
-		return f.apply(this, a); 
-	};
+    var args = arguments; // Save the outer arguments array
+    return function() { // And return this function
+        var a = array(args, 1); // Start with the outer args from 1 on.
+        a = a.concat(array(arguments)); // Then add all the inner arguments.
+        return f.apply(this, a); 
+    };
 }
 
 // The arguments to this function are passed on the right
 function partialRight(f /*, ...*/ ) {
-	var args = arguments; // Save the outer arguments array
-	return function() { // And return this function
-		var a = array(arguments); // Start with the inner arguments.
-		a = a.concat(array(args, 1)); // Then add the outer args from 1 on.
-		return f.apply(this, a); // Then invoke f on that argument list.
-	};
+    var args = arguments; // Save the outer arguments array
+    return function() { // And return this function
+        var a = array(arguments); // Start with the inner arguments.
+        a = a.concat(array(args, 1)); // Then add the outer args from 1 on.
+        return f.apply(this, a); // Then invoke f on that argument list.
+    };
 }
 ```
 
@@ -1446,21 +1446,21 @@ function partialRight(f /*, ...*/ ) {
 
 ```
 function memorize(f) {
-	var cache = {}; //缓存结果
-	return function() {
-		var key = arguments.length + Array.prototype.join.call(arguments,',');
-		if (key in cache) return cache[key];
-		else return cache[key] = f.apply(this,arguments)
-	}
+    var cache = {}; //缓存结果
+    return function() {
+        var key = arguments.length + Array.prototype.join.call(arguments,',');
+        if (key in cache) return cache[key];
+        else return cache[key] = f.apply(this,arguments)
+    }
 }
 
 //返回两个整数的最大公约数
 //欧几里德算法
 function gcd(a,b) {
-	var t;
-	if (a < b) t=b,b=a,a=t; //确保a>=b
-	while (b != 0) t=b,b=a%b,a=t;
-	return a;
+    var t;
+    if (a < b) t=b,b=a,a=t; //确保a>=b
+    while (b != 0) t=b,b=a%b,a=t;
+    return a;
 }
 
 var gcdmemo = memorize(gcd);
@@ -1476,28 +1476,28 @@ gcdmemo(85,187)  //17
 ```
 方法一： 自定义constructor
 Range.prototype = {
-	constructor: Range, // Explicitly set the constructor back-reference
-	includes: function(x) {
-		return this.from <= x && x <= this.to;
-	},
-	foreach: function(f) {
-		for (var x = Math.ceil(this.from); x <= this.to; x++) f(x);
-	},
-	toString: function() {
-		return "(" + this.from + "..." + this.to + ")";
-	}
+    constructor: Range, // Explicitly set the constructor back-reference
+    includes: function(x) {
+        return this.from <= x && x <= this.to;
+    },
+    foreach: function(f) {
+        for (var x = Math.ceil(this.from); x <= this.to; x++) f(x);
+    },
+    toString: function() {
+        return "(" + this.from + "..." + this.to + ")";
+    }
 };
 
 方法二  利用预定义的原型对象
 // the automatically created Range.prototype.constructor property.
 Range.prototype.includes = function(x) {
-	return this.from <= x && x <= this.to;
+    return this.from <= x && x <= this.to;
 };
 Range.prototype.foreach = function(f) {
-	for (var x = Math.ceil(this.from); x <= this.to; x++) f(x);
+    for (var x = Math.ceil(this.from); x <= this.to; x++) f(x);
 };
 Range.prototype.toString = function() {
-	return "(" + this.from + "..." + this.to + ")";
+    return "(" + this.from + "..." + this.to + ")";
 };
 ```
 9.5 类和类型
@@ -1520,19 +1520,19 @@ Function.prototype.isPrototypeOf(obj)
 
 ```
 function typeAndValue(x) {
-	if (x == null) return ""; // Null and undefined don't have constructors
-	switch (x.constructor) {
-		case Number:
-			return "Number: " + x; // Works for primitive types
-		case String:
-			return "String: '" + x + "'";
-		case Date:
-			return "Date: " + x; // And for built-in types
-		case RegExp:
-			return "Regexp: " + x;
-		case Complex:
-			return "Complex: " + x; // And for user-defined types
-	}
+    if (x == null) return ""; // Null and undefined don't have constructors
+    switch (x.constructor) {
+        case Number:
+            return "Number: " + x; // Works for primitive types
+        case String:
+            return "String: '" + x + "'";
+        case Date:
+            return "Date: " + x; // And for built-in types
+        case RegExp:
+            return "Regexp: " + x;
+        case Complex:
+            return "Complex: " + x; // And for user-defined types
+    }
 }
 ```
 9.5.3 万能判断！ 
@@ -1562,5 +1562,374 @@ function classOf(o) {
 }
 ```
 
-9.5.4 鸭式辩型
+9.6 JS 中的面向对象技术
 
+9.6.1 例子-集合类
+
+实现Set类
+
+```
+function Set() {
+    this.values = {};
+    this.n = 0;
+    this.add.apply(this,arguments);
+}
+
+Set.prototype.add = function (){}...
+...
+```
+9.6.2 判断相等（数组，对象，undefined，null，数字,字符串）
+
+```
+function equals(a, b) {
+    if (typeof a === 'number' && typeof b === 'number') return a === b;
+    if (typeof a === 'string' && typeof b === 'string') return a === b;
+    if (a === undefined && b === undefined) return true;
+    if (a === null && b === null) return true;
+    if (a == null || b == null) return false;
+    if (typeof a === 'object' && typeof b === 'object') {
+        for (var i in a) {
+            if (a.hasOwnProperty(i) && b[i]) {
+                console.log(a[i], b[i])
+                if (typeof a[i] === 'object') {
+                    equals(a[i], b[i])
+                } else {
+                    if (!(a[i] === b[i])) return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+    }
+    if (a.constructor !== b.constructor) return false;
+    if (Object.keys(a).length !== Object.keys(b).length) return false;
+    return true;
+}
+```
+
+9.7 子类 -- 设计模式
+
+..略过
+
+9.8 ECMAScript5中的类
+
+9.8.1 让属性不可枚举
+
+```
+(function(){
+    Object.defineProperty(Object.prototype, 'objectId', {
+        get: idGetter,
+        enumerable:fasle,
+        configurable:false
+    });
+
+    function idGetter(){
+        if(!(idprop in this)){
+            if (!Object.isExtensible(this)) throw ....
+            Object.defineProperty(this,idprop,{
+                value:nextid++,
+                writable:false,
+                enumerable:false,
+                configurable:false
+            })
+
+        }
+        return this[idprop];
+    }
+    var idprop = //
+    var nextid = 1; //初始值
+}())
+```
+
+9.8.2 定义不可变的类
+
+使用Object.create() 和 Object.defineProperties() 来将一些方法定位不可删除和只读
+
+小技巧： 使这个构造函数也可以用作工厂函数， new 或者不　new 都能正确创建实例
+```
+function Range (from, to) {
+    var props = {
+        from:{value:from,enumerable:true,writable:false,configurable:false},
+        to:{value:to,enumerable:true,writable:false,configurable:false}
+    }
+
+    if (this instanceof Range) //如果用作构造函数
+        Object.defineProperties(this,props) //定义属性
+    else                                    //工厂模式
+        return Object.create(Range.prototype,props) //创建并返回新Range对象
+}
+```
+
+属性描述符工具函数
+
+```
+
+不可修改  不可删除
+function freezeProps(o) {
+    var props = (arguments.length == 1) 
+        ? Object.getOwnPropertyNames(o) 
+        : Array.prototype.splice.call(arguments,1);
+    props.forEach(function(n){
+        if (!Objecet.getOwnPropertyDescriptor(o,n).configurable) return;
+        Object.defineProperty(o,n,{writable:false,configurable:false});
+
+    })
+    return o; //可以继续使用
+
+}
+
+不可枚举
+function hideProps(o) {
+    var props = (arguments.length == 1) 
+        ? Object.getOwnPropertyNames(o) 
+        : Array.prototype.splice.call(arguments,1);
+    props.forEach(function(n){
+        if (!Objecet.getOwnPropertyDescriptor(o,n).configurable) return;
+        Object.defineProperty(o,n,{enumerable:false});
+
+    })
+    return o; //可以继续使用
+    
+}
+```
+
+9.8.4 防止类的扩展
+
+表示是否可以给对象添加新属性，Object.isExtensible()检查是否可扩展
+
+Object.preventExtensions(o) //不可扩展
+
+Object.seal(o) //不可扩展，所有自有属性不可配置，已有的可写属性可以设置  Object.isSealed()检测是否封闭
+
+Object.freeze(o) //更为严格的冻结，所有数据属性设置为只读，setter不受影响
+
+
+9.9 模块
+
+命名空间 方法等直接作为命名空间的属性
+
+私有命名空间的函数 （包裹在私有域中）
+
+或者应用构造函数,this.x=x,这样引出
+
+### 第十章 正则表达式的模式匹配
+
+10.1 定义
+
+10.1.1 
+
+特殊标点符号
+
+^
+$
+.
+*
+?
+=
+!
+|
+\
+/
+(
+)
+[
+]
+{
+}
+
+10.1.2 字符类 /[x]/
+
+直接量字符单独放进方括号就成了字符类，一个字符类可以匹配它包含的任意字符
+
+```
+[...]       方括号里的任意字符
+[^...]      不在方括号里的任意字符
+.           除换行符和其他Unicode行终止符之外的任意字符
+\w          [a-zA-Z0-9_].
+\W          [^a-zA-Z0-9_].
+\s          任意Unicode空白符
+\S          任意非Unicode空白符
+\d          [0-9].
+\D          [^0-9].
+[\b]        退格直接量 (special case).
+```
+
+10.1.3 重复x次
+```
+  n=<x<=m
+{ n , m }       匹配前一项至少n次，不能超过m次
+{ n ,}          匹配前一项至少n次
+{ n }           匹配前一项n次
+?               {0,1}.
++               {1,}.
+*               {0,} 
+
+
+例子：
+/d{2,4}/
+/w{3}\d?/  三个单词和一个可选的数字
+/\s+java\s+/     匹配前后带有一个或多个空格的字符串'java'
+/[^(]*/          匹配一个或多个非左括号的字符
+
+```
+
+使用*和?要注意，他们允许什么都不匹配
+
+非贪婪的重复:在待匹配的字符后面跟一个?
+
+特例：
+```
+非贪婪匹配还是匹配了整个字符串：
+
+x = 'aaab';
+re = /a+?b/
+x.match(re)  // ["aaab", index: 0, input: "aaab"]
+```
+
+这是因为正则表达式的模式匹配总会寻找字符串第一个可能匹配的位置  
+10.1.4 选择 |、分组()和引用
+
+| ：选择
+
+从左到右匹配直到发现匹配项
+```
+/a|ab/ 匹配'ab'时 只能匹配第一个字符
+```
+
+() 多个作用
+
+(1).单独项组合成子表达式
+```
+/java(script)?/ 匹配 ‘java’ 后可以有script也可以没有
+```
+(2).成功匹配后可以从目标中抽出和圆括号的子模式相匹配的部分
+```
+/[a-z]+(\d+)/ 可以取出后面的数字部分
+```
+(3).在'\'后跟一个数字可以引用前面的子表达式，数字指定了圆括号的子表示在正则表达式中的位置,
+
+这个引用指的是与那个模式相匹配的文本的引用
+```
+
+```
+总结下：
+```
+| 匹配左边或者右边的子表达式
+(...) 
+(?:...)只组合，把项组合到一个单元，但不记忆与该组相匹配的字符
+\n  和第n个分组第一次匹配的字符相匹配,组索引从左到右, ？:形式的分组不编码
+```
+10.1.5 指定匹配位置：锚
+
+\b匹配边界位置，\B匹配非边界位置
+
+/\B[Ss]cript/  匹配'JavaScript' 不匹配'script'
+
+(?=x) 中间的x表达式用于指定一个位置，必须匹配才能匹配..
+
+比如
+/[Jj]ava[Ss]cript?(?=\:)/  匹配''JavaScript: The ...'中的JavaScript ，因为有冒号
+
+?! 负向先行断言，指定接下来的字符都不必匹配
+
+/Java(?!Script)([A-Z]\w*)/ 能匹配''JavaScrip',不能匹配'JavaScript'
+
+总结：
+```
+^       开头
+$       结尾
+\b      匹配边界
+\B      匹配非边界
+(?=p)   接下来的字符都与p匹配,但不能包括匹配p的那些字符
+(?!p)   接下来的字符都不与p匹配
+```
+10.1.6 修饰符
+```
+i       执行不区分大小写的匹配
+g       执行一个全局匹配,
+m       多行匹配, ^ 匹配一行的开头和字符串的开头,$匹配行的结束和字符串的结束
+
+
+比如:
+/java$/im  可以匹配 'Java\nis fun'中的Java
+```
+
+10.2 用于模式匹配的String方法
+
+(1).search  
+
+''.search(//) ,返回位置，没找到返回-1
+```
+'JavaScript'.search(/script/i)  //4
+'JavaScript'.search('Script')   //4
+```
+
+不支持全局搜索,若参数不是正则表达式,则通过RegExp构造函数转换
+
+(2).replace 
+
+''.replace(//,str)
+
+替换，可以用g全局，若第一个参数是字符串，不转换成正则表达式
+
+```
+text.replace(/javascript/gi,'JavaScript') 所有都转换
+```
+还有一个功能，如果替换字符串中出现了$加数字，那么replace将用与指定的子表达式相匹配的文本来替换这两个字符
+
+比如：字符串中的英文引号替换为中文半角引号
+
+```
+有点问题...
+var quote = /"[^"]*"/g
+text.replace(quote,'“$1”')
+```
+(3).match
+
+''.match(//) 返回数组,参数正则表达式 或转换过去的
+
+```
+'1 asd 2 ads 3'.match(/\d+/g) // ["1", "2", "3"]
+
+没加g时，非全局，此时数组的第一个元素就是匹配的字符串，余下的元素则是正则表达式中用括号括起来的子表达式。
+
+var url = /(\w+):\/\/([\w.]+)\/(\S*)/;
+var text = 'visit my blog at http://www.example.com/~dadiv'
+var result = text.match(url);
+//["http://www.example.com/~dadiv", "http", "www.example.com", "~dadiv", index: 17, input: "visit my blog at http://www.example.com/~dadiv"]
+
+
+reulst[0]   "http://www.example.com/~dadiv"
+result[1]   "http"  
+result[2]   "www.example.com"
+result[3]   "~dadiv"
+
+```
+(4).split
+
+```
+允许两遍留有任意多的空白符
+"1, 2, 3, 4, 5".split(/\s*,\s*/) //['1','2','3','4,'5']
+```
+
+10.3 RegExp 对象
+
+传入两个参数，第一个参数注意使用时 \的转义！
+
+var zipcode = new RegExg('\\d{5}','g')
+
+10.3.1 RegExp方法
+
+(1).exec()
+
+类似于match()，区别在于不管是否全局g，exec()都会返回一样的数组,并且提供本次匹配的完整信息，如果带有g的话，每次exec()执行完后，它都会将lastIndex属性设置成紧挨着匹配字串的字符位置，第二次执行exec()时，将从那个lastIndex开始检索,没有找到的话就将lastIndex置0
+```
+
+```
+(2).test()
+
+和exec()差不多
+
+使用全局小心lastIndex的改变，  直接量的每次计算都会创建一个新的RexExp对象 则不用担心这个问题
+/g
