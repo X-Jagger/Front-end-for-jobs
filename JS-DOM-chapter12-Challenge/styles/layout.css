@@ -1,0 +1,124 @@
+header,article,nav {
+	display:block;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+}
+body {
+	margin: 1em 10%;
+	/*下面两个背景图片不滚动 固定到左上角 重复*/
+	background-image: url(../images/background.gif);
+	background-attachment: fixed; 
+	background-position: top left;
+	background-repeat: repeat-x;
+	/*max-width: 80em;*/
+}
+header {
+	background-image: url(../images/guitarist.gif);
+	background-repeat: no-repeat;
+	background-position:bottom right;
+	border-width: .1em;
+	border-style: solid;
+	border-bottom-width:0;
+}
+header nav {
+  background-image: url(../images/header navbar.gif);
+  background-position: bottom left;
+  background-repeat: repeat-x;
+  border-width: .1em;
+  border-style: solid;
+  border-bottom-width: 0;
+  border-top-width: 0;
+  padding-left: 10%;
+}
+header nav ul {
+	/*去除列表前面的点*/
+  width: 100%;
+  overflow: hidden;
+  border-left-width: .1em;
+  border-left-style: solid;
+}
+header nav li {
+  display: inline;
+}
+header nav li a {
+  display: block;
+  float: left;
+  padding: .5em 2em;
+  border-left: .1em solid;
+}
+article {
+  border-width: .1em;
+  border-style: solid;
+  border-top-width: 0;
+  padding: 2em 10%;
+  line-height: 1.8em;
+}
+article img {
+  border-width: .1em;
+  border-style: solid;
+  outline-width: .1em;
+  outline-style: solid;
+}
+
+/*//页面header*/
+#about header {
+  background-image: url(../images/lineup.gif);
+}
+#photos header {
+  background-image: url(../images/basshead.gif);
+}
+#live header {
+  background-image: url(../images/bassist.gif);
+}
+#contact header {
+  background-image: url(../images/drummer.gif);
+}
+
+/*幻灯片动起来*/
+#slideshow {
+  width:150px;
+  height: 150px;
+  position: relative;
+  overflow:hidden;
+}
+#preview {
+  position: absolute;
+  border-width: 0;
+}
+
+/*幻灯片小窗口*/
+#frame {
+  position: absolute;
+  top:0;
+  left: 0;
+  z-index: 99;
+}
+
+#imagegallery li {
+  display: inline;
+}
+
+/*live : 表格*/
+td {
+  padding: .5em 3em
+}
+th {
+  color: #edc;
+  background-color: #455;
+
+}
+tr td {
+  color:#223;
+  background-color: #eb6;
+}
+
+/*contact 表单*/
+label {
+  display: block;
+}
+fieldset{
+  border:0;
+}
