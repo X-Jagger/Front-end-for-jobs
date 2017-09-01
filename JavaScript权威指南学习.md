@@ -1933,3 +1933,267 @@ var zipcode = new RegExg('\\d{5}','g')
 
 使用全局小心lastIndex的改变，  直接量的每次计算都会创建一个新的RexExp对象 则不用担心这个问题
 /g
+
+总结练习正则：
+```
+验证 邮箱、url、电话
+```
+
+## 第二部分 客户端JavaScript
+
+### 第13章 web浏览器中的js
+
+13.1 客户端JS
+
+就是一个简易版的操作系统
+
+13.2 HTML中嵌入JS
+
+4种方法
+```
+-<script> 之间
+-<script>里的src所指
+-事件处理程序中 onclick=...
+-放在URL里，使用特殊的"javascript:" 协议
+```
+13.2.2  src外部脚本
+
+引用了src的script 之间的任何内容都会被忽略，用作库开发
+
+```
+<script type="x"></script>
+
+x指定一个不可执行的类型，可以用来嵌入任意的文本数据到文档中
+```
+
+13.2.5 URL中 js
+
+javascript:URL
+
+返回值为undefined 就不会覆盖原来的文本
+```
+<a href="javascript:alert(new Date().toLocaleTimeString());">
+Check the time without overwriting the document
+</a>
+
+<a href="javascript:void window.open('about:blank');">Open Window</a>
+
+为了测试可以直接在浏览器url测试：
+javascript:URL
+
+```
+另外一个用法：脚本书签
+
+把href里的内容存为书签 直接运行
+```
+<a href='javascript:
+var e = "", r = ""; /* Expression to evaluate and the result */
+do {
+
+e = prompt("Expression: " + e + "\n" + r + "\n", e);
+try { r = "Result: " + eval(e); } /* Try to evaluate the expression */
+catch(ex) { r = ex; } /* Or remember the error instead */
+} while(e); /* Continue until no expression entered or Cancel clicked */
+void 0; /* This prevents the current document from being overwritten */
+'>
+JavaScript Evaluator
+</a>
+```
+
+13.3 JS程序的执行
+
+分两个阶段：执行script元素里的代码（内联和外部）
+
+第二个阶段：异步事件驱动 
+
+13.3.1 同步、异步和延迟的脚本
+
+文档还在载入时还没有API可以遍历和操作文档内容和结构，只能快速生成内容,window.write()
+
+外部脚本的影响：文档内容已经载入，但DOM树生成受JS代码执行的影响，JS会阻塞UI的渲染
+
+脚步的执行默认下是同步和阻塞的，通过script的defer和async属性更改脚本执行方式：
+
+defer使浏览器延迟脚本的执行，直到文档载入和解析完成，按顺序
+
+async使浏览器尽快处理脚本，文档解析也在进行，可能无序
+
+如果两个属性都在，遵从async
+
+
+```
+<script defer src="deferred.js"></script>
+<script async src="async.js"></script>
+```
+
+还可以动态创建script元素实现脚本的异步载入和执行
+```
+// Asynchronously load and execute a script from a specified URL
+function loadasync(url) {
+    var head  = document.getElementsByTagName("head")[0]; // Find document <head>
+    var s = document.createElement("script"); // Create a <script> element
+    s.src = url; // Set its src attribute
+    head.appendChild(s); // Insert the <script> into head
+}
+```
+
+13.3.2 事件驱动的JS
+
+object.onEvent = function(){}..
+```
+window.onload = function() { ... };
+document.getElementById("button1").onclick = function() { ... };
+function handleResponse() { ... }
+request.onreadystatechange = handleResponse;
+```
+
+对象参数：大部分的事件会把一个对象传递给事件处理程序作为参数，那个对象的属性提供了事件的详细信息，比如e.preventDefault();
+
+冒泡：button点击后，如果没有处理函数，点击事件会向上冒泡..被其它元素的点击事件调用
+
+一个事件注册多个事件处理函数，监听器：大部分对象都有一个addEventListener()方法，允许注册多个监听器，没有on
+```
+window.addEventListener("load", function() {...}, false);
+request.addEventListener("readystatechange", function() {...}, false);
+
+IE8以前兼容：用window.attachEvent()..
+window.attachEvent("onload", function() {...});
+```
+
+13.3.3 客户端JS 时间线
+
+1.Web创建Document对象，并开始解析HTML元素和文本内容...document.readystate值为'loading'
+
+2.HTML解析器遇到一般的script时会直接执行。解析暂停
+
+3.HTML遇到asyn的script时，（异步脚本）边下载脚本边解析，,禁止使用document.write()
+
+4.文档解析完了后,document.readystate值为'interactive'
+
+5.defer等文档解析完了 按照顺序执行,禁止使用document.write()
+
+（DOMContentLoaded...）
+6.等其他内容载入（图片等），并且所有异步脚本载入完成后，document.readystate值为'complete' ,web浏览器触发load事件
+
+7.此刻起调用异步事件
+
+13...
+
+兼容性和互用性、可访问性、安全性、
+
+13.6.1 JS不能做什么
+
+（1）防线1 ： 不支持某些功能：文件访问、通用网络能力
+浏览器和浏览器之间不能直接进行通信
+
+（2）防线2：功能上施加限制
+
+新开、关闭窗口、同源策略等
+
+13.6.2 同源策略
+（1）.
+文档来源：协议、主机、载入文档的URL端口
+
+重点是文本来源，而不是脚本来源，只要脚本嵌入了某一个文档，它就具有访问那个文档的100%的权利
+
+（2）不严格的同源策略1 ：设置document.domain
+
+比如：home.example.com 里的脚本想要访问develop.example.com里的文件，可以使用document.domain，这个存放的是服务器的主机名，前两个设置成example.com，就可以互相读取属性了
+
+
+（2）不严格的同源策略2 ：跨域资源共享：允许服务器用头信息显式地列出源
+
+（2）不严格的同源策略3 ： 跨文档消息：允许传递消息 window.postMessage()
+
+13.6.4 跨站脚本
+
+Cross-site scripting : XSS 攻击者向目标站点注入html标签或脚本
+
+比如不过滤用户输入，然后用户输入<script>...</script>传入脚本，该脚本嵌入到目标站点，可以到与同目标站点同源的其他站点进行任何操作.. 这就叫跨站脚本攻击
+
+13.6.5拒绝服务攻击
+
+无限对话框之类的,或者window.setInterval 占用CPU
+
+### 第十四章 window对象
+
+14.2 浏览器定位和导航
+
+window.location === document.location 这两个都是引用的Location对象，表示该窗口当前显示的文档的URL
+
+14.2.1 解析URL
+
+location有很多属性
+
+href,protocol,host,hostname,port,pathname,search,hash
+```
+hash:""
+host:"github.com"
+hostname:"github.com"
+href:"https://github.com/X-Jagger"
+origin:"https://github.com"
+pathname:"/X-Jagger"
+port:""
+protocol:"https:"
+
+search:"?hl=zh-CN&q=hello&cad=h"//另外的url
+```
+提取search属性值还需要用到decodeURLComponent(),对value进行解码
+
+14.2.2 载入新的文档，几个方法
+
+location.assign(URL)、载入并显示你指定的URL中的文档
+
+location.replace(URL)、功能相似，不同的是会删除浏览历史当前文档无法后退到原来那个页面,可以用这个来载入静态HTML版本
+
+location.reload() 重新加载当前页面
+
+传统的修改方式
+```
+location = "http://www.oreilly.com"; // Go buy some books!
+location = "page2.html"; // Load the next page 相对url
+location = "#top"; // Jump to the top of the document
+location.search = "?page=" + (pagenum+1); // load the next page
+```
+
+14.3 浏览历史
+
+window.history引用的History对象，用来把窗口的浏览历史用文档和文档状态列表的形式表示，length属性，不能访问已保存的URL
+
+history.back() 
+
+history.forward() 
+
+history.go(-2) 后退两次
+
+14.4 浏览器和屏幕信息
+
+    (1).Navigator对象 包含浏览器场上和版本信息
+
+(2).Screen对象
+```
+Screen {availWidth: 1536, availHeight: 824, width: 1536, height: 864, colorDepth: 24...}
+```
+
+14.5 三种对话框
+
+alert()
+
+confirm() 点击确定或取消，返回一个Boolean
+
+prompt() 输入框，返回用户输入的字符串
+
+showModalDialog(URL,[],"") 对话框 （想象BootStrap里面的Modal模块）
+
+```
+var p = showModalDialog("multiprompt.html",
+["Enter 3D point coordinates", "x", "y", "z"],
+"dialogwidth:400; dialogheight:300; resizable:yes"); 
+//类似这样
+```
+
+14.7 作为Window对象属性的文档元素
+
+如果在HTML文档中用id属性给元素命名，并且window对象没有此名字的属性，则可以通过window.'id'直接访问该元素对象
+
+<button id="okey"/> 可以通过全局变量okey来引用此元素
