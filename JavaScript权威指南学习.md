@@ -52,7 +52,17 @@ NaN : isNaN()
 0.1 + 0.2
 //0.30000000000000004
 ```
-(3)日期和时间
+(3)日期和时间Date()中月份从0开始
+```
+new Date('1504341276334') // wrong
+new Date(1504339190494)  //right
+var birthday = new Date('December 17, 1995 03:24:00');
+var birthday = new Date('1995-12-17T03:24:00');
+var birthday = new Date(1995, 11, 17);
+var birthday = new Date(1995, 11, 17, 3, 24, 0);
+```
+
+
 ```
 var time = new Date();//Wed Aug 23 2017 22:35:46 GMT+0800
 
@@ -2197,3 +2207,380 @@ var p = showModalDialog("multiprompt.html",
 如果在HTML文档中用id属性给元素命名，并且window对象没有此名字的属性，则可以通过window.'id'直接访问该元素对象
 
 <button id="okey"/> 可以通过全局变量okey来引用此元素
+
+name可以多个元素一样，document.getElementsByName()取出的类数组
+
+14.8多窗口和窗体
+
+14.8.1 打开和关闭窗口
+
+(1)
+window.open(URL,name,"列表指定尺寸等",Boolean)
+
+名字允许open()引用已存在的窗口
+
+第四个参数在name指定一个存在的窗口时才有用，默认false，浏览器历史创建一个新条目
+
+open()的返回值是代表新创建的窗口的window对象
+```
+var w = window.open("smallwin.html", "smallwin",
+"width=400,height=350,status=yes,resizable=yes");
+
+w.oepn().opener === w ; // true, 两个窗口之间可以相互引用
+```
+(2)关闭窗口
+
+```
+w.close()
+
+或者window.close()
+```
+
+14.8.2 窗体之间的关系
+
+w = window.open(....) 新窗口
+
+w.opener === 原始窗口
+
+
+parent引用包含它的窗口
+
+如果一个窗口是顶级窗口: parent == self;
+
+top属性直接指向包含它的顶级窗口本身
+
+寻找子孙窗口
+窗体是通过。iframe>元素创建的，该元素有concentWindow属性，引用该窗体的window对象
+```
+var childFrame = document.getElementById('id').contentWindow;
+```
+逆向操作 ：frameElement属性
+
+顶级窗口的Window对象的frameElement属性为null
+```
+var elt = document.getElementById("f1");
+var win = elt.contentWindow;
+win.frameElement === elt // Always true for frames
+window.frameElement === null // For toplevel windows
+```
+每个window对象有一个frames属性,引用自身包含的窗口
+
+14.8.3 交互窗口中的JS
+
+每个窗口都有它的JS执行上下文，以Window对象为全局对象，如果两个iframe元素A,B可以交互
+
+A： var i = 3;  window.i === 3 // true
+B: parent.A.i === 3 // true
+
+每个窗口都有相对对立的内置函数、原型对象之类，因此instanceof不能跨窗口工作
+
+### 第十五章 脚本化文档 Dom
+
+15.2.5 CSS选择器选取元素
+
+p[lang="fr"] 基于属性 <p lang="fr">
+
+#log>span子代元素中span
+
+#log span 所有后代中span
+
+body>h1:first-child  body的子元素中的第一个h1元素
+```
+#nav // An element with id="nav"
+div // Any <div> element
+.warning // Any element with "warning" in its class attribute
+
+More generally, elements can be selected based on attribute values:
+
+p[lang="fr"] // A paragraph written in French: <p lang="fr">
+*[name="x"] // Any element with a name="x" attribute
+
+These basic selectors can be combined:
+
+span.fatal.error // Any <span> with "warning" and "fatal" in its class
+span[lang="fr"].warning // Any warning in French
+
+Selectors can also specify document structure:
+
+#log span // Any <span> descendant of the element with id="log"
+#log>span // Any <span> child of the element with id="log"
+body>h1:first-child // The first <h1> child of the <body>
+
+Selectors can be combined to select multiple elements or
+multiple sets of elements:
+
+div, #log // All <div> elements plus the element with id="log
+```
+还有一招：querySelectorAll()  和 querySelector()
+
+如果 selectors参数中包含 CSS伪元素,则返回一个空的elementList.
+```
+//所有的class为"note"或者 "alert"的div元素.
+var matches = document.querySelectorAll("div.note, div.alert");
+```
+#### 15.3 文档结构和遍历
+
+15.3.1 节点树的文档
+
+Document,Element,和Text都是Node对象，Node定义了以下属性
+
+parentNode childNodes firstChild lastChild nextSibling previoursSibling
+
+nodeType 节点类型 (1:元素；属性：2；文本节点：3),
+
+nodeValue Text节点或Commont节点的文本内容
+
+nodeName 元素标签名 大写形式表示'BODY'
+
+注意：该API对文档变化敏感，插入一个新行,就表示插入了一个Text节点
+
+15.3.2 作为元素树的文档 （忽略Text Comment节点）
+
+(1)children属性，只包括Element对象,Text，Comment节点没有children属性,只有子代
+
+(2) Element属性，类似Node对象的子属性和兄弟属性
+
+firstElementChild,lastElementChild,nextElementSibling,previousElementSibling,childElementCount
+
+#### 15.4 属性
+
+HTML属性名不区分大小写，但JS属性名则大小写敏感
+
+setAttribute() getAttribute hasAttribute() removeAttribute()
+
+15.4.3 数据集属性 data-x
+
+补充作用，附加额外数据
+
+Elmenet上有dataset属性，指代对象，各个属性对应去掉前缀的data-属性： 
+data-jquery-test属性就变成了dataset.jqeuryTest属性
+
+15.4.4作为Attr节点的属性
+
+Node类型定义了attributes属性，非Element节点该属性为null，只读类数组
+
+```
+document.body.attributes[0] // body元素的第一个属性
+document.body.attributes.bgclor // ...
+```
+
+#### 15.5 元素的内容
+
+15.5.1 作为HTML的元素内容
+
+innerHTML：作为字符串标记返回那个元素的所有内容
+
+outerHTML：返回的HTML字符串包含被查询元素的开头和结尾标签
+
+insertAdjacentHTML() 'beforebegin' 'afterbegin' 'beforeend' 'afterend' 
+```
+"Hello World!
+<span>hello jagger</span>
+
+p.innerHTML
+// "Hello World!
+<span>hello jagger</span>
+
+p.outerHTML
+//"<p id="p">Hello World!
+<span>hello jagger</span>
+</p>"
+
+p.insertAdjacentHTML('beforebegin','lala')
+//  HTML里<p>前面多了一个lala
+```
+15.5.2 作为纯文本的元素内容
+
+textContent innerText属性，获得纯文本
+
+textContent:指定元素的所有后代Text串联在一起,会注意到原来文档的结构
+
+innerText直接连一起，忽略多余的空白
+
+```
+<p id="p">Hello World!
+<span>hello jagger</span>
+</p>
+
+var para = document.getElementsByTagName('p')[0];
+var text = para.textContent;
+var text2 = para.innerText;
+
+text:
+"Hello World!
+hello jagger
+"
+
+text2: 
+"Hello World! hello jagger"
+
+```
+15.5.3 作为Text节点的元素内容
+
+nodeValue 可以读写
+
+15.6 创建、插入、删除节点
+
+15.6.1 创建
+
+document.createTextNode("hello world");
+
+document.createElement()
+
+复制已存在的节点：每个节点有一个cloneNode()，传入参数true递归复制所有后代节点
+
+```
+var clonedP = p.cloneNode(true) 
+
+clonedP就和p一样了，注意id也是一样的
+```
+
+15.6.2 插入节点
+
+Element.appendChild(x)  
+
+parent.insertBefore(x,Element) //x插入到Element的前面,若传入第二个参数是null,则把节点插入到最后
+
+如果将存在的节点再次插入，相当于改变顺序，不需要显式删除
+
+15.6.3 删除和替换节点
+
+```
+n.parentNode.removeChild(n)
+
+n.parentNode.replaceChild(document.createTextNode('hello'),n)
+```
+注意第一个参数是新节点，第二个是需要代替的节点
+
+
+15.6.4 使用DocumentFragment
+
+一种特殊的Node，作为其他节点的一个临时的容器,它的parentNode总是null,它的特殊之处在于它使得一组节点被当作一个节点看待：如果给appendChild(),insertBefore() 或 replaceChild() 传递一个DocumentFragment,其实是将该文档片段的所有子节点插入到文档中
+
+举例: 倒序排列一个子列的子节点
+```
+function reverse(n) {
+    var f = document.createDocumentFragment();
+    while(n.lastChild) f.appendChild(n.lastChild);
+    n.appendChild(f);
+}
+```
+var frag = document.createDocumentFragment();
+
+#### 15.7 生成目录表
+
+遍历body寻找标题元素
+```
+function findHeadings(root, sects) {
+    if (document.querySelectorAll) {
+        return document.querySelectorAll("h1,h2,h3,h4,h5,h6")
+    } else {
+        for (var c = root.firstChild; c != null; c = c.nextSibling) {
+            if (c.nodeType !== 1) continue;
+            if (c.tagName.length == 2 && c.tagName.charAt(0) == 'H')
+                sects.push(c);
+            else
+                findHeadings(c, sects);
+        }
+    }
+}
+```
+
+#### 15.8 文档和元素的集合形状和滚动
+
+15.8.1 文档坐标、视口坐标（窗口坐标）
+(1) 滚动条：pageXOffset,pageYOffset,scrollLeft, scrollTop
+
+window对象的pageXOffset pageYOffset滚动条位置（除IE8及更早的版本以外）
+
+所有现代浏览器： scrollLeft, scrollTop属性--滚动条
+
+一般在document.documentElement.scroll..
+
+（怪异模式..IE6..）必须在document.body.scroll..上查询
+
+document.body.scrollTop // 都成功了
+pageYOffset //  都成功了
+document.documentElement.scrollTop // 一直是0
+```
+// Return the current scrollbar offsets as the x and y properties of an object
+function getScrollOffsets(w) {
+    // Use the specified window or the current window if no argument
+    w = w || window;
+    // This works for all browsers except IE versions 8 and before
+    if (w.pageXOffset != null) return {
+        x: w.pageXOffset,
+        y: w.pageYOffset
+    };
+    // For IE (or any browser) in Standards mode
+    var d = w.document;
+    if (document.compatMode == "CSS1Compat")
+        return {
+            x: d.documentElement.scrollLeft,
+            y: d.documentElement.scrollTop
+        };
+    // For browsers in Quirks mode
+    return {
+        x: d.body.scrollLeft,
+        y: d.body.scrollTop
+    };
+}
+
+```
+(2).窗口视口尺寸 : innerWidth,innerHeight,clientWidth,clientHeight
+
+15.8.2 查询元素的几何尺寸
+
+判断元素视口尺寸和位置：element.getBoundingClientRect()
+
+返回一个有left,right,top,bottom，(width,height IE中没有)属性的对象，坐标包含元素的边框和内边距，不包含外边距，
+并不是实时更新的
+```
+{top: 24, right: 200.8000030517578, bottom: 44.80000305175781, left: 8, width: 192.8000030517578,...}
+```
+
+获得文档坐标：（加上滚动）
+```
+
+var offsets = getScrollOffsets();
+var x = box.left + offsets.x;
+var y = box.top + offsets.y;
+```
+
+计算元素的文档width和height：
+```
+var box = e.getBoundingClientRect();
+var w = box.width || (box.right-box.left);
+var h = box.height || (box.bottom-  box.top);
+```
+15.8.3 判断元素在某点
+
+document.elementFromPoint(x,y) (视口坐标) 不经常用
+
+15.8.4 滚动
+
+window.scrollTo(x,y) (文档坐标)
+
+window.scrollBy(stepx,stepy),滚动stepx,stepy这么远，偏移量上增加
+
+window.scroll()和scrollTo很相似
+
+滚动浏览器到闻到那股最下面的页面可见
+```
+var documentHeight = document.documentElement.offsetHeight;
+var viewportHeight = window.innerHeight; 
+
+// And scroll so the last "page" shows in the viewport
+window.scrollTo(0, documentHeight - viewportHeight);
+```
+或者为了使某个元素可见: x
+x.getBoundingClientRect()计算元素位置，转化为文档坐标，然后用scrolTo()达到目标；
+
+还有一招：在需要显示的HTML元素上调用scrollIntoView() 保证元素在窗口可见， 传入false，下边缘在视口下边缘
+```
+p.scrollIntoView()  //兼容性不好
+
+function Scrolldown() {
+    window.location.hash = '#iWantToScrollHere';
+}
+```
