@@ -2550,7 +2550,8 @@ var y = box.top + offsets.y;
 计算元素的文档width和height：
 ```
 var box = e.getBoundingClientRect();
-var w = box.width || (box.right-box.left);
+var w = box.width |
+| (box.right-box.left);
 var h = box.height || (box.bottom-  box.top);
 ```
 15.8.3 判断元素在某点
@@ -2584,3 +2585,134 @@ function Scrolldown() {
     window.location.hash = '#iWantToScrollHere';
 }
 ```
+
+15.8.5 关于元素尺寸、位置和溢出的更多信息..
+
+老版本获得元素的尺寸和位置: offsetWidth offsetHeight以CSS像素返回它的屏幕尺寸
+
+offsetLeft,offsetTop 返回元素的x和y坐标，（文档坐标）
+
+...略过一些内容
+
+15.9 HTML表单
+
+15.9.1 选取表单和元素
+
+(1)可以用DOM操作来选取
+```
+var field = document.getElementById().getElementById('input')
+```
+(2)也可以用querySelectorAll()
+
+//id为shipping的表单中所有名字为"method"的单选按钮
+```
+document.querySelectorAll("#shipping input[type='radio'][name='method']")
+```
+(3)有name或id属性的form元素可以通过多种方法来选取:
+```
+<form action="" name="test" >
+    <input type="button" name="button">
+<input type="password" name="password">
+
+
+</form>
+有id的直接window.test
+
+document.forms //返回的表单类数组对象
+
+document.forms.test
+
+document.forms[0]
+```
+如果想要明确选取一个表单元素，可以索引表单对象的elements属性，以name属性的值为索引
+```
+document.forms[0].elements
+// [input,input,input...]
+
+document.forms[0].elements.password // ~
+```
+
+15.9.2 表单和表单属性
+
+elements,type,form(对包含元素的Form对象的引用),name,value..
+
+15.9.3 表单事件处理程序
+
+onsubmit, onreset 通过返回false可以取消提交动作，onsubmit只有通过点击“提交”来完成
+
+onchange,onclick,onfocus,onblur, 
+
+15.9.4 按钮
+
+input 按钮 value显示按钮的值
+
+button元素定义的按钮将元素的所有内容显示出来
+
+15.9.5 开关按钮
+
+复选框和单选框
+
+name属性值共享，都有checked属性,可读可写，defaultChecked是Boolean值，单选框点击改变了其他单项框的selected状态不算onchange
+
+15.9.6 文本域
+
+input type="text">  和 <\Textarea> 不同的文本定义onkeypress,onkeydown,onkeyup可以返回false 来强制用户输入特定文本
+
+15.9.7 选择框和选项元素
+```
+<select name="hello" id="select" size = 2>
+    <option value="1">1</option>
+    <option value="2">2</option>
+</select>
+```
+15.10 其他文档特性
+
+15.10.1 Document的属性
+cookie  domain lastModified  location referrer title URL
+
+```
+document.lastModified
+"09/05/2017 11:24:11"
+
+document.location
+Location {href: "file:///C:/Users/X.Jagger/Desktop/test.html", ancestorOrigins: DOMStringList, origin: "file://", replace: ƒ, assign: ƒ,…}
+
+document.referrer 导航到当前连接的上一个文档
+
+document.URL // 不包含动态变化,和location.href初始值相同
+"file:///C:/Users/X.Jagger/Desktop/test.html"
+```
+
+15.10.3 查询选取的文本
+
+window.getSelection().toString() //除IE 兼容性不好，无法返回表单元素中的文本
+
+```
+function getSelectedText() {
+    if (window.getSelection) // The HTML5 standard API
+        return window.getSelection().toString();
+    else if (document.selection) // This is the IE-specific technique.
+        return document.selection.createRange().text;
+}
+
+window.getSelection().toString() // 'Jagger'
+```
+
+从文本输入或textarea中获取文本可使用一下代码
+```
+elt.value.substring(elt.selectionStart, elt.selectionEnd);
+
+```
+
+15.10.4可编辑的呢日哦那个
+
+(1).设置任何标签的HTML contenteditable属性
+
+(2).设置对应元素的JS contenteditable属性
+
+```
+<div id="editor" contenteditable>
+Click to edit
+</div>
+```
+将Document对象的designMode属性设置为on可以使得整个文档可编辑
