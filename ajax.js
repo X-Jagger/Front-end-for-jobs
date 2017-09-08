@@ -38,8 +38,9 @@ httpRequest.onreadystatechange = nameOfTheFunction;
 
 在这个函数里有几步需要完成：
 
-  (1) 检查request 's state,表示服务器的连接状态,4表示请求结束,response is ready
-``
+  (1) 检查request state, 表示服务器的连接状态, 4 表示请求结束, response is ready
+
+  ``
 `
 if (httpRequest.readyState === 4(XMLHttpRequest.DONE)) {//就是4
     // Everything is good, the response was received.
@@ -268,8 +269,66 @@ async函数并不属于ES6， 而是被列入了ES7， 但是traceur编译器已
 
 # # # # generator
 
+# # # 三、 HTTP
 
-# # # 跨域解决
+应用层 HTTP： 无状态、 无连接
+
+传输层 TCP
+
+有三次握手保证通信的可靠性：
+
+发送端 - > 接收站： SYN
+接收站 - > 发送端： SYN / ACK
+发送端 - > 接收站： ACK 握手结束
+
+
+网络层 IP
+
+链路层
+
+
+二、 HTTP协议详解之请求篇
+
+http请求由三部分组成， 分别是： 请求行、 消息报头、 请求正文
+
+1、 请求行以一个方法符号开头， 以空格分开， 后面跟着请求的URI和协议的版本， 格式如下： Method Request - URI HTTP - Version CRLF
+其中 Method表示请求方法； Request - URI是一个统一资源标识符； HTTP - Version表示请求的HTTP协议版本； CRLF表示回车和换行（ 除了作为结尾的CRLF外， 不允许出现单独的CR或LF字符）。
+
+请求方法（ 所有方法全为大写） 有多种， 各个方法的解释如下：
+GET 请求获取Request - URI所标识的资源
+POST 向指定的资源提交要被处理的数据
+HEAD 请求获取由Request - URI所标识的资源的响应消息报头
+PUT 请求服务器存储一个资源， 并用Request - URI作为其标识
+DELETE 请求服务器删除Request - URI所标识的资源
+TRACE 请求服务器回送收到的请求信息， 主要用于测试或诊断
+CONNECT 保留将来使用
+OPTIONS 请求查询服务器的性能， 或者查询与资源相关的选项和需求
+
+
+  (2)
+POST 与 PUT的区别在于， 重复put没有副作用， 重复POST会有副作用， 比如会生成更多的XXX
+
+如果你自己命名你自己创造的对象， 就用PUT, 否则用POST
+
+  (3)
+GET 与 POST的区别：
+
+GET 后退按钮 / 刷新 无影响
+GET 请求可被缓存
+GET 请求保留在浏览器历史记录中
+GET 请求可被收藏为书签
+GET 请求不应在处理敏感数据时使用
+GET 请求有长度限制
+GET 请求只应当用于取回数据
+
+POST 后退按钮 / 刷新 数据会被重新提交
+POST 请求不会被缓存
+POST 请求不会保留在浏览器历史记录中
+POST 不能被收藏为书签
+POST 请求对数据长度没有要求
+
+
+# # # 安全 & 跨域
 
 Using CORS
 Using JSONP
