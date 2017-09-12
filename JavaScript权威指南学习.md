@@ -1877,7 +1877,7 @@ m       多行匹配, ^ 匹配一行的开头和字符串的开头,$匹配行的
 
 不支持全局搜索,若参数不是正则表达式,则通过RegExp构造函数转换
 
-(2).replace 
+(2).replace 不改变原来的字符串
 
 ''.replace(//,str)
 
@@ -2716,3 +2716,7 @@ Click to edit
 </div>
 ```
 将Document对象的designMode属性设置为on可以使得整个文档可编辑
+
+
+"2" in ["2"]
+false

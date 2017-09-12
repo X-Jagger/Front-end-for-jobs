@@ -38,9 +38,8 @@ httpRequest.onreadystatechange = nameOfTheFunction;
 
 在这个函数里有几步需要完成：
 
-  (1) 检查request state, 表示服务器的连接状态, 4 表示请求结束, response is ready
-
-  ``
+  (1) 检查request 's state,表示服务器的连接状态,4表示请求结束,response is ready
+``
 `
 if (httpRequest.readyState === 4(XMLHttpRequest.DONE)) {//就是4
     // Everything is good, the response was received.
@@ -330,5 +329,373 @@ POST 请求对数据长度没有要求
 
 # # # 安全 & 跨域
 
-Using CORS
-Using JSONP
+# # # # JavaScript防http劫持与XSS
+
+原文： http: //www.cnblogs.com/coco1s/p/5777260.html
+
+  HTTP劫持与XSS跨站脚本（ Cross - site scripting）、 CSRF跨站请求伪造（ Cross - site request forgery）
+
+一、 XSS 怎么防御
+  (1).一个经典的防御方法就是对内容进行转义和过滤
+
+  ``
+`
+var escapeHtml = function(str) {
+  if (!str) return '';
+  str = str.replace(/&/g, '&amp;');
+  str = str.replace(/</g, '&lt;');
+  str = str.replace(/>/g, '&gt;');
+  str = str.replace(/"/g, '&quto;');
+  str = str.replace(/'/g, '&#39;'); // str = str.replace(/ /g, '&#32;'); 
+  return str;
+};
+var name = escapeHtml(` < script > alert('SB') < /script>`);
+``
+`
+
+(2). CSP大法  
+
+content security policy
+
+自定义规则限制哪些内容可信哪些不可信
+
+`
+``
+Content - Security - Policy: script - src 'self';
+``
+`
+这样除了在同一个域名下的JS文件外，其他的脚本都不可以执行了
+
+二、CSRF跨站请求伪造（Cross-site request forgery）
+
+在 Cookies 中会存放用户的身份凭证。在大部分时候，就是一个 SessionId 。当用户下次访问我们的网站的时候，我们用这个凭证识别出用户是谁，有没有登录态。
+
+此时如果我们向第三方网站的代码发出请求，cookies就被暴露了
+
+CSRF防御： 判断来源和添加token
+
+referrer不是自己的网站就返回错误
+
+因为，html里的action可以跨域提交，表单里添加唯一的token，确保来源表单提交是可信的
+
+sameSite:   strict  
+
+表单提交必须使用POST
+
+
+
+####  跨域
+
+1.浏览器的同源策略：协议，端口、和域名对于两个页面是相同的，则两个页面具有相同的源。
+
+IE的例外： 
+
+(1).两个相互之间高度互信的域名，公司域名，不遵守同源限制
+(2).端口，端口不同也算同源
+
+源的修改：
+`
+``
+document.domain = "company.com";
+//页面将会成功地通过对 http://company.com/dir/page.html 的同源检测
+``
+`
+注：浏览器单独保存端口号。任何的赋值操作，包括document.domain = document.domain都会以null值覆盖掉原来的端口号
+
+1.3 限制范围：
+cookie,localStorage,indexDB无法获取
+
+DOM无法获取
+
+AJAX无法请求
+
+二、cookie 
+
+适用于cookie和Iframe窗口
+同源的网页才能共享cookie,两个网页一级域名相同，只是二级域名不同，浏览器允许通过设置document.domain共享 Cookie。
+
+二、iframe
+
+iframe.contentWindow 返回内联框架的window对象
+
+contentDocument返回内联框架的document对象
+
+子代想获得主窗口的DOM或者反过来，如果一级域名相同，也可以使用设置documen.domain，拿到DOM
+
+三、完全不同源的网站的跨域解决
+
+3.1 片段识别符
+
+指的是URL的#号后面的部分，比如http://example.com/x.html#fragment的#fragment。如果只是改变片段标识符，页面不会重新刷新。
+`
+``
+父窗口可以把信息， 写入子窗口的片段标识符。
+
+var src = originURL + '#' + data;
+document.getElementById('myIFrame').src = src;
+子窗口通过监听hashchange事件得到通知。
+
+myIFrame.contentWindow.onhashchange = checkMessage;
+
+function checkMessage() {
+  var message = myIFrame.contentWindow.location.hash;
+  // ...
+}
+同样的， 子窗口也可以改变父窗口的片段标识符。
+
+parent.location.href = target + "#" + hash; //在子窗口控制台无法访问
+``
+`
+成功测试~  console里可以选择窗口环境，
+
+3.2 window.name
+
+window.name无论是否同源，只要在一个窗口里，都可以访问读取
+
+`
+``
+父窗口打开一个子窗口， 网页信息写入window.name属性，
+window.name = data;
+接着， 子窗口跳回一个与主窗口同域的网站
+location = 'http://parent.url.com/xxx.html';
+然后， 主窗口就可以读取子窗口的window.name了
+var data = document.getElementById('myFrame').contentWindow.name;
+
+优点是window.name容量很大， 缺点是必须监听子窗口window.name属性的变化 ``
+`
+
+3.3 window.postMessage (来自HTML5)
+
+向谁发送消息，就用谁的窗口作主语： 可以反复传递消息
+
+发送：
+`
+``
+window.frames[0].postMessage('hello buddy', URL);
+``
+`
+接受：addEventListener,onmessage都可以(考虑兼容性)
+
+postEvent是一个对象，有几个重要属性
+
+data：顾名思义，是传递来的message
+source：发送消息的窗口对象
+origin：发送消息窗口的源（协议+主机+端口号）
+`
+``
+window.frames[0].contentWindow.addEventListener('message', function(postEvent) {
+  console.log(postEvent.data)
+})
+``
+`
+3.4 LocalStorage
+
+通过window.postMessage,读写其他窗口的localStorage也成了可能
+`
+``
+localStorage.setItem(payload.key, JSON.stringify(payload.data));
+
+localStorage.getItem(payload.key);
+localStorage.removeItem(payload.key);
+``
+`
+四、AJAX规避同源限制
+
+1.架设服务器代理，浏览器请求同源服务器，再由后者请求外部服务
+2.JSONP
+3.WebSocker
+4.CORS
+
+
+4.1 JSONP  只能发出GET请求
+
+服务器与客户端跨源通信，简单适用，老式浏览器全都支持
+
+基本思想：动态插入script元素,由它向跨源网址发送请求，服务器收到请求后，将数据放到一个指定名字的callback回调函数里传回来
+`
+``
+
+function addScriptTag(src) {
+  var script = document.createElement('script');
+  script.setAttribute("type", "text/javascript");
+  script.src = src;
+  document.body.appendChild(script);
+}
+
+window.onload = function() {
+  addScriptTag('http://example.com/ip?callback=foo');
+}
+
+function foo(data) {
+  console.log('Your public IP address is: ' + data.ip);
+};
+``
+`
+
+服务器参数的返回
+`
+``
+foo({
+  "ip": "8.8.8.8"
+})
+
+``
+`
+注意会立即调用foo,作为参数的JSON数据作为JS对象，不用使用JSON.pase
+
+4.2  WebSocket
+
+WebSocket是一种通信协议，使用ws://（非加密）和wss://（加密）作为协议前缀。该协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信
+
+览器发出的WebSocket请求的头信息
+`
+``
+GET / chat HTTP / 1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec - WebSocket - Key: x3JJHMbDL1EzLkh9GBhXDw ==
+  Sec - WebSocket - Protocol: chat, superchat
+Sec - WebSocket - Version: 13
+Origin: http: //example.com
+
+  ``
+`
+服务器根据Origin这个字段来判断是否允许本次通信，如果该域名在白名单，服务器就会允许
+
+
+4.3 CORS，Cross-Origin Resource Sharing 跨源资源分享,W3C标准
+终极解决方法
+
+(1)、
+
+CORS需要浏览器和服务器同时支持，IE不能低于IE10，只要服务器实现了CORS接口，就可以跨源通信。
+
+(2)、两种请求
+
+浏览器将CORS请求分为两类：简单请求、非简单请求
+
+只要同时满足以下两大条件，就属于简单请求。
+`
+``（
+1) 请求方法是以下三种方法之一：
+HEAD
+GET
+POST（ 2） HTTP的头信息不超出以下几种字段：
+Accept
+Accept - Language
+Content - Language
+Last - Event - ID
+Content - Type： 只限于三个值application / x - www - form - urlencoded、 multipart / form - data、 text / plain ``
+`
+
+(3)、简单请求
+
+3.1基本流程 
+
+对于简单请求，直接在头部信息里加一个Origin字段
+`
+``
+GET / cors HTTP / 1.1
+Origin: http: //api.bob.com
+  Host: api.alice.com
+Accept - Language: en - US
+Connection: keep - alive
+User - Agent: Mozilla / 5.0...
+``
+`
+
+如果Origin指定的源不在许可范围内，服务器会返回一个正常的HTTP回应，浏览器发现回应的头信息里没有 Access-Control-Allow-Origin字段，
+抛出错误，被onerror回调函数捕获，这种错误无法被状态码识别。
+
+如果允许：
+`
+``
+Access - Control - Allow - Origin: http: //api.bob.com
+  Access - Control - Allow - Credentials: true //是否允许发送Cookie，默认不发送
+Access - Control - Expose - Headers: FooBar //增添额外的header信息
+Content - Type: text / html;
+charset = utf - 8 ``
+`
+3.2 withCredentials 属性
+
+CORS默认不发送Cookie和HTTP认证信息，如果要发送cookie需要双方支持
+
+Access-Control-Allow-Credentials: true
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+但是，如果省略withCredentials设置，有的浏览器还是会一起发送Cookie。这时，可以显式关闭withCredentials。
+
+xhr.withCredentials = false;
+
+需要注意的是，如果要发送Cookie，Access-Control-Allow-Origin就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的document.cookie也无法读取服务器域名下的Cookie。
+
+4 非简单请求
+
+PUT,DELETE ,Content-Type字段的类型是application/json。 
+
+会多一个步骤，HTTP查询请求 preflight
+
+`
+``
+OPTIONS / cors HTTP / 1.1
+Origin: http: //api.bob.com
+  Access - Control - Request - Method: PUT
+Access - Control - Request - Headers: X - Custom - Header
+Host: api.alice.com
+Accept - Language: en - US
+Connection: keep - alive
+User - Agent: Mozilla / 5.0...
+``
+`
+
+服务器收到"预检"请求以后，检查了Origin、Access-Control-Request-Method和Access-Control-Request-Headers字段以后，确认允许跨源请求，就可以做出回应。
+
+HTTP/1.1 200 OK
+Date: Mon, 01 Dec 2008 01:15:39 GMT
+Server: Apache/2.0.61 (Unix)
+Access-Control-Allow-Origin: http://api.bob.com
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: X-Custom-Header
+Content-Type: text/html; charset=utf-8
+Content-Encoding: gzip
+Content-Length: 0
+Keep-Alive: timeout=2, max=100
+Connection: Keep-Alive
+Content-Type: text/plain
+上面的HTTP回应中，关键的是Access-Control-Allow-Origin字段，表示http://api.bob.com可以请求数据。该字段也可以设为星号，表示同意任意跨源请求。
+
+Access-Control-Allow-Origin: *
+如果浏览器否定了"预检"请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被XMLHttpRequest对象的onerror回调函数捕获。控制台会打印出如下的报错信
+
+4.3 浏览器的正常请求和回应
+一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个Origin头信息字段。服务器的回应，也都会有一个Access-Control-Allow-Origin头信息字段。
+下面是"预检"请求之后，浏览器的正常CORS请求。
+`
+``
+PUT / cors HTTP / 1.1
+Origin: http: //api.bob.com
+  Host: api.alice.com
+X - Custom - Header: value
+Accept - Language: en - US
+Connection: keep - alive
+User - Agent: Mozilla / 5.0...
+``
+`
+上面头信息的Origin字段是浏览器自动添加的。
+下面是服务器正常的回应。
+`
+``
+Access - Control - Allow - Origin: http: //api.bob.com
+  Content - Type: text / html;
+charset = utf - 8
+
+  ``
+`
+上面头信息中，Access-Control-Allow-Origin字段是每次回应都必定包含的。
+
+
+CORS与JSONP的使用目的相同，但是比JSONP更强大。
+JSONP只支持GET请求，CORS支持所有类型的HTTP请求。JSONP的优势在于支持老式浏览器，以及可以向不支持CORS的网站请求数据。
