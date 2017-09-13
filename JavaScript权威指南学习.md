@@ -211,7 +211,7 @@ null.toString() //error
 
 parseInt('ff',16) //255
 parseInt("3 nlis") //3
-parseInt("$3 nlis") //NaN
+parseInt("$3 nlis") //NaN ...
 
 parseInt('0.7') // 0
 parseFloat('0xFF',16) // 0
@@ -2206,7 +2206,7 @@ var p = showModalDialog("multiprompt.html",
 
 如果在HTML文档中用id属性给元素命名，并且window对象没有此名字的属性，则可以通过window.'id'直接访问该元素对象
 
-<button id="okey"/> 可以通过全局变量okey来引用此元素
+button id="okey" 可以通过全局变量okey来引用此元素
 
 name可以多个元素一样，document.getElementsByName()取出的类数组
 
@@ -2263,7 +2263,9 @@ var win = elt.contentWindow;
 win.frameElement === elt // Always true for frames
 window.frameElement === null // For toplevel windows
 ```
-每个window对象有一个frames属性,引用自身包含的窗口
+
+每个window对象有一个frames属性,引用自身包含的窗口,类数组对象
+window.frames[0] 引用第一个子窗口,就是window对象，而不是iframe元素
 
 14.8.3 交互窗口中的JS
 
@@ -2352,7 +2354,7 @@ setAttribute() getAttribute hasAttribute() removeAttribute()
 
 补充作用，附加额外数据
 
-Elmenet上有dataset属性，指代对象，各个属性对应去掉前缀的data-属性： 
+Element上有dataset属性，指代对象，各个属性对应去掉前缀的data-属性： 
 data-jquery-test属性就变成了dataset.jqeuryTest属性
 
 15.4.4作为Attr节点的属性
@@ -2473,7 +2475,7 @@ var frag = document.createDocumentFragment();
 ```
 function findHeadings(root, sects) {
     if (document.querySelectorAll) {
-        return document.querySelectorAll("h1,h2,h3,h4,h5,h6")
+        return document.querySelectorAll("h1,h2,h3,h4,h5,h6")//逗号连接的是表示或
     } else {
         for (var c = root.firstChild; c != null; c = c.nextSibling) {
             if (c.nodeType !== 1) continue;
@@ -2566,7 +2568,7 @@ window.scrollBy(stepx,stepy),滚动stepx,stepy这么远，偏移量上增加
 
 window.scroll()和scrollTo很相似
 
-滚动浏览器到闻到那股最下面的页面可见
+滚动浏览器到最下面的页面可见
 ```
 var documentHeight = document.documentElement.offsetHeight;
 var viewportHeight = window.innerHeight; 
@@ -2616,11 +2618,11 @@ document.querySelectorAll("#shipping input[type='radio'][name='method']")
 
 
 </form>
-有id的直接window.test
+有name属性的直接window.name
 
 document.forms //返回的表单类数组对象
 
-document.forms.test
+document.forms.name
 
 document.forms[0]
 ```
@@ -2650,7 +2652,7 @@ button元素定义的按钮将元素的所有内容显示出来
 
 15.9.5 开关按钮
 
-复选框和单选框
+复选框和单选框select  options 下拉菜单形式，设置size属性大于1，将显示为列表中的选项
 
 name属性值共享，都有checked属性,可读可写，defaultChecked是Boolean值，单选框点击改变了其他单项框的selected状态不算onchange
 
@@ -2704,7 +2706,7 @@ elt.value.substring(elt.selectionStart, elt.selectionEnd);
 
 ```
 
-15.10.4可编辑的呢日哦那个
+15.10.4可编辑的内容
 
 (1).设置任何标签的HTML contenteditable属性
 
@@ -2716,7 +2718,137 @@ Click to edit
 </div>
 ```
 将Document对象的designMode属性设置为on可以使得整个文档可编辑
+```
+var x = document.getElementById('editor');
+x.contentDocument.designMode = 'on'
+```
 
+iframe.contentDocument,返回frame的嵌套浏览执行上下文的文档对象
 
-"2" in ["2"]
-false
+document.documentElement 是一个会返回文档对象（document）的根元素的只读属性（如HTML文档的 <html> 元素）
+
+### 第十六章 脚本化CSS
+
+16.1.1 层叠
+
+style样式覆盖了样式表中的样式，样式表的样式覆盖了浏览器的默认样式
+
+16.2 重要的CSS属性
+
+16.2.1 CSS定位
+
+(1).position
+
+static 默认
+
+abosolute 指定元素相对于它包含的元素进行定位，
+相对于定位祖先或文档本身，独立的，不是文档流中的一部分
+
+fixed 相当于浏览器窗口定位，独立的，不是文档流中的一部分
+
+relative 相当于它文档流中的位置进行定位
+
+一旦设置了position属性为除了static以外的值，
+就可以用left,top等进行定位，指定元素的各个边缘到**容器**的距离
+
+如果使用abosolute定位，
+top和left为相当于其除static的position属性的祖先元素。
+若无定位祖先，则使用文档坐标进行度量-----文档左上角的偏移量，
+
+相对于一个常规文档流中的容器进行绝对定位，则将容器的position设置为relative，
+这样其绝对定位的子元素都将相对于容器进行定位。 这样容器成了动态定位，但仍然留在文档流中原来的位置
+
+指定宽度和高度：  width和height， 还可以是同时指定left right属性 （width会覆盖right,height会覆盖bottom） //测试出错?
+
+百分比：
+
+1). height/width的百分比相对于父本元素 ；
+
+2). margin/padding的百分比相当于父本宽度
+
+(2).z-index 层叠次序
+
+z-index高的显示在上面 ，只对兄弟元素应用层叠效果
+
+非定位元素之间不能应用z-index 然而设置了z-index的定位元素位于其上其下或挨着
+
+(3).文本阴影 CSS3 text-shadow
+
+text-shadow: h-shadow v-shadow blur color; (水平阴影的位置，垂直阴影的位置，模糊的距离，阴影的颜色)
+
+可以用重复输出文本加relative ,absolute定位的方式实现阴影效果
+
+16.2.2 边框、外边距和内边距
+
+上、右、下、左
+
+border-top-right-radius设置右上角圆角
+
+16.2.3 CSS盒模型和定位细节
+
+border,padding,margin
+
+(1)width,height只指定了元素内容区域的尺寸，不包括padding,margin
+
+(2)left和top指定了容器边框内侧到定位元素边框外侧的距离 。
+
+因此如果想在容器内容区域的左上角定位子元素，必须将其left和top属性指定为容器的内边距
+
+(3).边框盒模型和box-sizing属性
+
+IE6之前width,height包含内边距和边框宽度...IE就是个BUG
+
+CSS3引进了box-sizing属性，默认值是content-box,指定了内容盒模型，
+border-box，则应用IE的盒模型
+
+应用：百分比形式设置元素总体尺寸，同时以像素单位指定边框和内边距
+```
+border-sizing:border-box;width:50%;padding:10px;border:solid black 2px
+```
+16.2.4 元素显示和可见性
+
+visibility: hidden,visible
+
+display:none,inline-block,inline,block
+
+16.2.5 颜色、透明度和半透膜度
+
+(1) color,background-color
+英文名，十六进制 #fff, rgb(255,255,255) (IE8及以前都不支持)
+
+(2).opacity 不透明度
+
+16.2.6 部分可见： overflow,clip
+
+overflow: visible,hidden,scroll(一直显示滚动条),auto(滚动条在超出元素尺寸时显示)
+
+clip 指定裁剪区域: rect(top right bottom left) 必须带单位，不允许百分比
+```
+style = "clip:rect(auto 100px auto auto)" 只保留元素的最左边的100px
+style = "clip:rect(0px 100px 100px 0px)" 保留左上角100*100的正方形
+```
+
+16.3 脚本化内联样式
+
+直接修改元素对象的style属性，font-family名变驼峰名fontFamily
+
+当一个CSS属性是保留字的时候（float属性），在前加css前缀来合法话，cssFloat来设置元素的float属性
+
+style属性的所有值都是字符串，所有的定位属性都要包含单位
+
+可以用getAttribute(),setAttribute()或者style.cssText属性来访问与修改style
+```
+e.style.fontFamily = "sans-serif";
+e.style.backgroundColor = "#ffffff";
+e.style.left = "300px"; 
+e.style.marginTop = topMargin + "px";
+e.style.marginRight = rightMargin + "px";
+
+// Set the style attribute of e to the string s with either of these lines:
+e.setAttribute("style", s);
+e.style.cssText = s;
+// Query the inline style string of the element e with either of these:
+s = e.getAttribute("style");
+s = e.style.cssText;
+```
+16.3.1 CSS动画
