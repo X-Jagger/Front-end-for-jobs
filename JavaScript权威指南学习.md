@@ -2180,6 +2180,15 @@ history.go(-2) 后退两次
 
     (1).Navigator对象 包含浏览器场上和版本信息
 
+    Navigator的5个主要属性：
+appName:Web浏览器的名称
+appVersion:浏览器的版本号和其他版本信息
+userAgent:浏览器在它的USER-AGENT HTTP标题中发送的字符串。该属性包含appName,appVersion属性的所有信息
+appCodeName:浏览器的代码名
+platform:客户浏览器所在的操作系统
+cookieEnabled 
+url
+
 (2).Screen对象
 ```
 Screen {availWidth: 1536, availHeight: 824, width: 1536, height: 864, colorDepth: 24...}
@@ -2852,3 +2861,376 @@ s = e.getAttribute("style");
 s = e.style.cssText;
 ```
 16.3.1 CSS动画
+
+16.4 查询计算的样式
+
+window.getComputedStyle(element,null); 第一个参数是元素，第二个参数是必须的,通常是null或者空字符串,也可以是伪字符串,':first'这样
+它的cssText属性没有定义
+```
+// Scale the text size of element e by the specified factor
+function scale(e, factor) {
+var size = parseInt(window.getComputedStyle(e,"").fontSize);
+e.style.fontSize = factor*size + "px";
+}
+```
+返回的指的属性是只读的，所有单位全是绝对值，不计算符合属性，比如marginLeft
+
+16.5 脚本化CSS类
+
+直接修改HTML的class属性，因为class在JS里是保留字，所以用className
+```
+e.className = "XXX";
+```
+但是如果有多个类名，就不太好工作了，HTML5中用于替换的classList属性，该属性值是DOMTokenList对，一个只读的类数组对象,
+
+拥有add,remove,toggle,contains等等方法 ,toggle表示如果不存在类名就添加一个，如果存在就删除
+```
+e.classList 
+// ['test'] 
+e.classList [0] // 'test'
+e.classList.add('test2') // //    ["test", "test2"]
+e.classList.remove('test') // undefined     ['test2']
+e.classList.toggle('test') // true    ["test", "test2"]
+e.classList.toggle('test') // false 删除了'test' ['test2']
+p.classList.contains('test') // false
+```
+16.6 脚本化样式表
+
+document.styleSheets //返回HTML中以link引入的
+
+样式表的类数组
+```
+StyleSheetList {0: CSSStyleSheet, 1: CSSStyleSheet, length: 2}
+```
+
+16.6.1 开启和关闭样式表
+
+style,link,CSSStyleSheet对象都定义了disabled属性，设置为true,则关闭了这个样式表
+
+16.6.2 查询、插入与删除样式表规则
+
+document.styleSheets[]数组的元素是CSSStyleSheet对象，这个对象有一个cssRules[]数组，包含样式表的所有规则 ，style才有，link的cssRules是null
+
+16.6.3 创建新样式表
+
+大部分浏览器中，用DOM标准技术创建script元素，插入到头部，然后用innerHTML属性来设置
+
+IE8及更早版本，document.createStyleSheet()来创建，样式文本用cssText来指定
+
+创建并插入新样式表
+```
+function addStyle(styles) {
+    var styleElt,styleSheet;
+    if (document.createStyleSheet) {
+        styleSheet = document.createStyleSheet();
+    }
+    else {
+        var head = document.getElementsByTagName('head')[0];
+        styleElt = document.createElement('style');
+        head.appendChild(styleElt);
+        styleSheet = document.styleSheets[document.styleSheets.length-1]
+    }
+    if (typeof styles === 'string' ){
+        if (styleElt) styleElt.innerHTML = styles;
+        else styleSheet.cssText = styles;
+    }
+    else {
+        ...
+    }
+}
+```
+
+### 第17章 事件处理
+
+事件类型、事件目标、事件处理程序、事件监听程序、
+
+事件对象，type,target属性keyCode等
+
+事件传播：关于事件冒泡，对象被触发的顺序
+
+事件捕获，可以在事件传播到真实目标前捕获它
+
+特定事件：文档加载和准备就绪事件、鼠标、鼠标滚轮、拖放、文本输入事件
+
+17.1 事件类型
+
+17.1.1 传统事件类型
+
+1.表单事件：
+
+submit,reset,click,change,focus,blur事件
+
+focus,blur事件不会冒泡，其他表单事件可以
+
+2.window事件
+
+load,
+unload：当用户离开当前文档转向其他文档时触发它
+beforeunload：提供询问用户是否确认离开当前的页面的机会
+onerror:JS出错时会触发它，但是它不是真正的事件处理程序，因为它能用不同的参数来调用
+resize,scroll： 调正浏览器窗口大小或滚动，传递的事件对象不能指定调整大小或发生滚动的详细信息
+
+3.鼠标事件
+
+鼠标事件在最深嵌套元素上触发，但会冒泡直到文档最顶层。 
+
+它的事件对象有一个属性集，描述了鼠标的位置和按键状态；MouseEvent{...}
+```
+detail:x 表示单击、双击还是三击
+target:body
+altKey:false // 没有按alt键 ...
+```
+mousemove,mousedown,mouseup,
+
+mouseover,mouseout悬浮和离开，冒泡版本（难以确定是否真的离开了目标元素）
+
+mouseenter,mouseleave 非冒泡版本，
+
+右键事件contextmenu,跟在第二个click事件之后是dbclick事件
+
+mousewheel:鼠标滚轮,传递的事件对象指定滚动的大小和方向
+
+4.键盘事件
+
+
+### 第18章 脚本化HTTP
+
+JSONP只是Ajax的一种GET跨域方式，服务器响应使用JSON格式，执行脚本的时候会自动将其解码（parse）,因此叫JSONP
+
+18.1 使用XMLHttpRequest
+
+IE中是ActiveObject,一个HTTP请求由4部分组成：请求动作，url,可选的请求头，可选的请求主体
+
+返回的HTTP响应包含三部分：数字和文字组成的状态码，响应头集合，响应主体
+
+18.1.1 指定请求
+```
+var request = new XMLHttpRequest();
+request.open()
+request.setRequestHeader('Content-Type','text/plain');
+request.send(null)//指定可选的请求主体发送过去
+```
+open('GET',URL)第一个参数不区分大小写，还可以是DELETE,HEAD,OPTIONS,PUT
+
+设置请求头：
+request.setRequestHeader('Content-Type','text/plain');
+如果调用多次，不会取代，而是指向多个值。  你不能自己指定'Date','Referer'等，
+如果需要传用户名，密码，作为第4，5个参数传递给open()
+
+18.1.2 取得响应
+
+- status,statusText: 200 ok 
+- getResponseHeader(),getAllResponseHeader()能查询到响应头（会过滤掉cookie）
+- 相应主体：responseText得到文本,responseXML得到Document形式
+
+readystate == readyState.DONE //equal to 4
+
+监听事件onreadystatechange = function..
+
+1.同步响应，第三个参数false传给open(),这就不需要readystatechange了，一旦send()返回，检查status和responseText属性就行了
+
+不推荐使用
+
+2.响应解码
+
+
+### 第20章 客户端储存
+
+Web储存，cookie, IE User Data, 离线Web应用,Web数据库(indexedDB),文件系统API
+
+20.1 localStorage和sessionStorage
+
+存储的值：字符串；来自window的属性，都代表同一个Storage对象，表现得像Object；
+
+二者的区别在于 存储的有效期 和作用域的不同
+
+方法：
+```
+Storage.key(n) // 返回 Storage[n]
+Storage.getItem()
+Storage.setItem() //增加，更新
+Storage.removeItem()
+Storage.clear()
+
+```
+
+
+
+20.1.1 存储有效期和作用域
+
+（1）localStorage永不过期，其作用域限定在文档源（协议，主机名，端口）还受限制于浏览器供应商
+同源的文档间共享localStorage
+
+(2)sessionStorage：存在会话中，浏览器刷新并不会改变  有效期和顶层窗口是一样的，作用域被限定在顶层窗口和文档源中（同一个窗口的iframe窗口之间sessionStorage可以共享）
+
+20.1.2 storage事件
+
+当储存的数据发生变化时，会触发storage事件。我们可以指定这个事件的回调函数。
+```
+window.addEventListener("storage",onStorageChange);
+回调函数接受一个event对象作为参数。这个event对象的key属性，保存发生变化的键名。
+
+function onStorageChange(e) {
+     console.log(e.key);    
+}
+```
+除了key属性，event对象的属性还有三个：
+
+oldValue：更新前的值。如果该键为新增加，则这个属性为null。
+newValue：更新后的值。如果该键被删除，则这个属性为null。
+url：原始触发storage事件的那个网页的网址。
+值得特别注意的是，该事件不在导致数据变化的当前页面触发。如果浏览器同时打开一个域名下面的多个页面，当其中的一个页面改变sessionStorage或localStorage的数据时，其他所有页面的storage事件会被触发，而原始页面并不触发storage事件。可以通过这种机制，实现多个窗口之间的通信。所有浏览器之中，只有IE浏览器除外，它会在所有页面触发storage事件。
+
+
+20.2 cookie
+Cookie 是服务器保存在浏览器的一小段文本信息，每个 Cookie 的大小一般不能超过4KB。浏览器每次向服务器发出请求，就会自动附上这段信息。
+ cookie不会加密，用HTTPS来传输cookie是安全的
+
+
+
+检测cookie是否启用： navigator.cookieEnabled // true就行
+
+Cookie 保存以下几方面的信息。
+
+Cookie的名字
+Cookie的值
+到期时间
+所属域名（默认是当前域名）
+生效的路径（默认是当前网址）
+
+document.cookie返回当前网页的cookie，是分号分隔的所有cookie,所以要手动还原
+```
+var cookies = document.cookie.split(';');
+
+for (var i = 0; i < cookies.length; i++) {
+  // cookies[i] name=value形式的单个Cookie
+}
+```
+cookie的值必须是key=value的形式，并且等号两边不能有空格，
+
+另外，写入Cookie的时候，必须对分号、逗号和空格进行转义（它们都不允许作为Cookie的值），这可以用encodeURIComponent方法达到。
+
+但是，document.cookie一次只能写入一个Cookie，而且写入并不是覆盖，而是添加。
+```
+document.cookie = 'test1=hello';
+document.cookie = 'test2=world';
+document.cookie
+// test1=hello;test2=world
+```
+
+22.2.1Cookie 的属性
+
+除了Cookie本身的内容，还有一些可选的属性也是可以写入的，它们都必须以分号开头。
+
+Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
+上面的Set-Cookie字段，用分号分隔多个属性。它们的含义如下。
+
+（1）value属性
+
+value属性是必需的，它是一个键值对，用于指定Cookie的值。
+
+（2）expires属性
+
+expires属性用于指定Cookie过期时间。它的格式采用Date.toUTCString()的格式。
+
+如果不设置该属性，或者设为null，Cookie只在当前会话（session）有效，浏览器窗口一旦关闭，当前Session结束，该Cookie就会被删除。
+
+浏览器根据本地时间，决定Cookie是否过期，由于本地时间是不精确的，所以没有办法保证Cookie一定会在服务器指定的时间过期。
+
+（3）domain属性
+
+domain属性指定Cookie所在的域名，比如example.com或.example.com（这种写法将对所有子域名生效）、subdomain.example.com。
+
+如果未指定，默认为设定该Cookie的域名。所指定的域名必须是当前发送Cookie的域名的一部分，比如当前访问的域名是example.com，就不能将其设为google.com。只有访问的域名匹配domain属性，Cookie才会发送到服务器。
+
+（4）path 属性
+
+path属性用来指定路径，必须是绝对路径（比如/、/mydir），如果未指定，默认为请求该 Cookie 的网页路径。
+
+只有path属性匹配向服务器发送的路径，Cookie 才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要path属性匹配发送路径的一部分，就可以发送。比如，path属性等于/blog，则发送路径是/blog或者/blog/roll，Cookie都会发送。path属性生效的前提是domain属性匹配。
+
+（5）secure 属性
+
+secure属性用来指定Cookie只能在加密协议HTTPS下发送到服务器。
+
+该属性只是一个开关，不需要指定值。如果通信是HTTPS协议，该开关自动打开。
+
+（6）max-age
+
+max-age属性用来指定Cookie有效期，比如60 * 60 * 24 * 365（即一年31536e3秒）。
+
+（7）HttpOnly
+
+HttpOnly属性用于设置该Cookie不能被JavaScript读取，详见下文的说明。
+
+以上属性可以同时设置一个或多个，也没有次序的要求。如果服务器想改变一个早先设置的Cookie，必须同时满足四个条件：Cookie的key、domain、path和secure都匹配。也就是说，如果原始的Cookie是用如下的Set-Cookie设置的。
+
+Set-Cookie: key1=value1; domain=example.com; path=/blog
+改变上面这个cookie的值，就必须使用同样的Set-Cookie。
+
+Set-Cookie: key1=value2; domain=example.com; path=/blog
+只要有一个属性不同，就会生成一个全新的Cookie，而不是替换掉原来那个Cookie。
+
+Set-Cookie: key1=value2; domain=example.com; path=/
+上面的命令设置了一个全新的同名Cookie，但是path属性不一样。下一次访问example.com/blog的时候，浏览器将向服务器发送两个同名的Cookie。
+
+Cookie: key1=value1; key1=value2
+上面代码的两个Cookie是同名的，匹配越精确的Cookie排在越前面。
+
+浏览器设置这些属性的写法如下。
+
+document.cookie = 'fontSize=14; '
+  + 'expires=' + someDate.toGMTString() + '; '
+  + 'path=/subdirectory; '
+  + 'domain=*.example.com';
+另外，这些属性只能用来设置Cookie。一旦设置完成，就没有办法读取这些属性的值。
+
+删除一个Cookie的简便方法，就是设置expires属性等于0，或者等于一个过去的日期。
+
+document.cookie = 'fontSize=;expires=Thu, 01-Jan-1970 00:00:01 GMT';
+上面代码中，名为fontSize的Cookie的值为空，过期时间设为1970年1月1月零点，就等同于删除了这个Cookie。
+
+Cookie的限制
+
+浏览器对Cookie数量的限制，规定不一样。目前，Firefox是每个域名最多设置50个Cookie，而Safari和Chrome没有域名数量的限制。
+
+所有Cookie的累加长度限制为4KB。超过这个长度的Cookie，将被忽略，不会被设置。
+
+由于Cookie可能存在数量限制，有时为了规避限制，可以将cookie设置成下面的形式。
+
+name=a=b&c=d&e=f&g=h
+上面代码实际上是设置了一个Cookie，但是这个Cookie内部使用&符号，设置了多部分的内容。因此，读取这个Cookie的时候，就要自行解析，得到多个键值对。这样就规避了cookie的数量限制。
+
+同源政策
+
+浏览器的同源政策规定，两个网址只要域名相同和端口相同，就可以共享Cookie。
+IE 会忽略端口，其他浏览器不忽略.
+
+注意，这里不要求协议相同。也就是说，http://example.com设置的Cookie，可以被https://example.com读取。
+
+Http-Only Cookie
+
+设置Cookie的时候，如果服务器加上了HttpOnly属性，则这个Cookie无法被JavaScript读取（即document.cookie不会返回这个Cookie的值），只用于向服务器发送。
+
+Set-Cookie: key=value; HttpOnly
+上面的这个Cookie将无法用JavaScript获取。进行AJAX操作时，XMLHttpRequest对象也无法包括这个Cookie。这主要是为了防止XSS攻击盗取Cookie。
+
+20.3 indexedDB 浏览器端数据库
+
+通俗地说，IndexedDB 就是浏览器端数据库，可以被网页脚本程序创建和操作。它允许储存大量数据，提供查找接口，还能建立索引
+
+（1）键值对储存。 IndexedDB 内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括 JavaScript 对象。在对象仓库中，数据以“键值对”的形式保存，每一个数据都有对应的键名，键名是独一无二的，不能有重复，否则会抛出一个错误。
+
+（2）异步。 IndexedDB 操作时不会锁死浏览器，用户依然可以进行其他操作，这与 LocalStorage 形成对比，后者的操作是同步的。异步设计是为了防止大量数据的读写，拖慢网页的表现。
+
+（3）支持事务。 IndexedDB 支持事务（transaction），这意味着一系列操作步骤之中，只要有一步失败，整个事务就都取消，数据库回到事务发生之前的状态，不存在只改写一部分数据的情况。
+
+（4）同域限制 IndexedDB 也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
+
+（5）储存空间大 IndexedDB 的储存空间比 LocalStorage 大得多，一般来说不少于250MB。IE的储存上限是250MB，Chrome和Opera是剩余空间的某个百分比，Firefox 则没有上限。
+
+（6）支持二进制储存。 IndexedDB 不仅可以储存字符串，还可以储存二进制数据。
+
+下面的代码用来检查浏览器是否支持这个 API。
+
+

@@ -112,19 +112,13 @@ type = "button" > Make a request < /button>
       }
     }
   })(); < /script>
-`
-`
-`
+
 
 # # # # Step 5– Working with data
 
-  `
-`
-`
+
 httpRequest.send('userName=' + encodeURIComponent(userName));
-`
-`
-`
+
 
 由于上述过程的麻烦程度， 所以有其它一些优雅的方式来进行异步请求, $.ajax, promise, async / await等等
 
@@ -139,16 +133,13 @@ httpRequest.send('userName=' + encodeURIComponent(userName));
   解决了无尽的callbacks噩梦
 
   语法： `
-`
-  `
+
 new Promise(
   /* executor */
   function(resolve, reject) {...
   }
 );
-`
-  `
-`
+
   一个 Promise有以下几种状态:
 
   pending: 初始状态， 不是成功或失败状态。 fulfilled: 意味着操作成功完成。 rejected: 意味着操作失败。
@@ -158,9 +149,8 @@ new Promise(
   函数里:
   -创建Promise - 异步函数返回promise对象， 函数有两个参数, resolve, reject - 如果异步成功, promise对象交给resolve方法来解决 - 异步失败， 交给rejected方法来reject
 
-  resolve, reject就是通过then() 来添加的, 异步成功的结果传给resolve也就是传给了tthen的第一个函数, reject里的结果传给then() 的第二个参数 函数外： - 引用函数获得promise对象 - 用then() 绑定成功和失败的事件处理 `
-`
-  `
+  resolve, reject就是通过then() 来添加的, 异步成功的结果传给resolve也就是传给了then的第一个函数, reject里的结果传给then() 的第二个参数 函数外： - 引用函数获得promise对象 - 用then() 绑定成功和失败的事件处理 `
+
 var promise = new Promise(function(resolve, reject) {
   if ( /*异步成功*/ ) {
     resolve(value);
@@ -174,9 +164,7 @@ promise.then(function(value) {
 }, function(error) {
   //failure
 })
-`
-  `
-`
+
 
   注意
   catch () 方法返回一个promise， 处理rejected情况， 实际上就是then(undefiend, X) obj.catch(onRejected) internally calls obj.then(undefined, onRejected)).
@@ -187,9 +175,7 @@ promise.then(function(value) {
 
   (2) 默认不会发送和接受cookies
 
-  `
-`
-`
+
 var myHeaders = new Headers();
 
 var myInit = {
@@ -211,17 +197,12 @@ fetch('flowers.jpg', myInit).then(function(response) {
 fetch('https://example.com', {
   credentials: 'include'
 })
-`
-`
-`
+
 
 检查fetch是否成功, 两个检查， 一个对promise的错误处理, 一个对response.ok的检查
 
 response.ok => http status code: 200 - 299
 
-  `
-`
-`
 fetch('flowers.jpg').then(function(response) {
   if (response.ok) {
     return response.blob();
@@ -233,9 +214,7 @@ fetch('flowers.jpg').then(function(response) {
 }).catch(function(error) {
   console.log('There has been a problem with your fetch operation: ' + error.message);
 });
-`
-`
-`
+
 
 
 # # # # async / await
@@ -245,23 +224,16 @@ async函数
 async函数是用来取代回调函数的另一种方法。
 
 只要函数名之前加上async关键字， 就表明该函数内部有异步操作。 该异步操作应该返回一个Promise对象， 前面用await关键字注明。 当函数执行的时候， 一旦遇到await就会先返回， 等到触发的异步操作完成， 再接着执行函数体内后面的语句。
-  `
-`
-`
 
 async function getStockPrice(symbol, currency) {
   let price = await getStockPrice(symbol);
   return convert(price, currency);
 }
-`
-`
-`
+
 上面代码是一个获取股票报价的函数， 函数前面的async关键字， 表明该函数将返回一个Promise对象。 调用该函数时， 当遇到await关键字， 立即返回它后面的表达式（ getStockPrice函数） 产生的Promise对象， 不再执行函数体内后面的语句。 等到getStockPrice完成， 再自动回到函数体内， 执行剩下的语句。
 
 下面是一个更一般性的例子。
-  `
-`
-`
+
 
 function timeout(ms) {
   return new Promise((resolve) => {
@@ -273,9 +245,7 @@ async function asyncValue(value) {
   await timeout(50);
   return value;
 }
-`
-`
-`
+
 上面代码中， asyncValue函数前面有async关键字， 表明函数体内有异步操作。 执行的时候， 遇到await语句就会先返回， 等到timeout函数执行完毕， 再返回value。
 
 async函数并不属于ES6， 而是被列入了ES7， 但是traceur编译器已经实现了这个功能。
@@ -351,8 +321,7 @@ POST 请求对数据长度没有要求
 
 一、 XSS 怎么防御
   (1).一个经典的防御方法就是对内容进行转义和过滤 `
-`
-`
+
 var escapeHtml = function(str) {
   if (!str) return '';
   str = str.replace(/&/g, '&amp;');
@@ -363,8 +332,7 @@ var escapeHtml = function(str) {
   return str;
 };
 var name = escapeHtml(` < script > alert('SB') < /script>`);
-``
-`
+
 
 (2). CSP大法  
 
@@ -372,11 +340,9 @@ content security policy
 
 自定义规则限制哪些内容可信哪些不可信
 
-`
-``
+
 Content - Security - Policy: script - src 'self';
-``
-`
+
 这样除了在同一个域名下的JS文件外，其他的脚本都不可以执行了
 
 二、CSRF跨站请求伪造（Cross-site request forgery）
@@ -482,11 +448,9 @@ var data = document.getElementById('myFrame').contentWindow.name;
 向谁发送消息，就用谁的窗口作主语： 可以反复传递消息
 
 发送：
-`
-``
+
 window.frames[0].postMessage('hello buddy', URL);
-``
-`
+
 接受：addEventListener,onmessage都可以(考虑兼容性)
 
 postEvent是一个对象，有几个重要属性
@@ -494,24 +458,20 @@ postEvent是一个对象，有几个重要属性
 data：顾名思义，是传递来的message
 source：发送消息的窗口对象
 origin：发送消息窗口的源（协议+主机+端口号）
-`
-``
+
 window.frames[0].contentWindow.addEventListener('message', function(postEvent) {
   console.log(postEvent.data)
 })
-``
-`
+
 3.4 LocalStorage
 
 通过window.postMessage,读写其他窗口的localStorage也成了可能
-`
-``
+
 localStorage.setItem(payload.key, JSON.stringify(payload.data));
 
 localStorage.getItem(payload.key);
 localStorage.removeItem(payload.key);
-``
-`
+
 四、AJAX规避同源限制
 
 1.架设服务器代理，浏览器请求同源服务器，再由后者请求外部服务
@@ -525,8 +485,6 @@ localStorage.removeItem(payload.key);
 服务器与客户端跨源通信，简单适用，老式浏览器全都支持
 
 基本思想：动态插入script元素,由它向跨源网址发送请求，服务器收到请求后，将数据放到一个指定名字的callback回调函数里传回来
-`
-``
 
 function addScriptTag(src) {
   var script = document.createElement('script');
@@ -542,18 +500,15 @@ window.onload = function() {
 function foo(data) {
   console.log('Your public IP address is: ' + data.ip);
 };
-``
-`
+
 
 服务器参数的返回
-`
-``
+
 foo({
   "ip": "8.8.8.8"
 })
 
-``
-`
+
 注意会立即调用foo,作为参数的JSON数据作为JS对象，不用使用JSON.pase
 
 4.2  WebSocket
@@ -561,8 +516,7 @@ foo({
 WebSocket是一种通信协议，使用ws://（非加密）和wss://（加密）作为协议前缀。该协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信
 
 览器发出的WebSocket请求的头信息
-`
-``
+
 GET / chat HTTP / 1.1
 Host: server.example.com
 Upgrade: websocket
@@ -572,8 +526,7 @@ Sec - WebSocket - Key: x3JJHMbDL1EzLkh9GBhXDw ==
 Sec - WebSocket - Version: 13
 Origin: http: //example.com
 
-  ``
-`
+
 服务器根据Origin这个字段来判断是否允许本次通信，如果该域名在白名单，服务器就会允许
 
 
@@ -589,8 +542,7 @@ CORS需要浏览器和服务器同时支持，IE不能低于IE10，只要服务�
 浏览器将CORS请求分为两类：简单请求、非简单请求
 
 只要同时满足以下两大条件，就属于简单请求。
-`
-``（
+
 1) 请求方法是以下三种方法之一：
 HEAD
 GET
@@ -599,37 +551,32 @@ Accept
 Accept - Language
 Content - Language
 Last - Event - ID
-Content - Type： 只限于三个值application / x - www - form - urlencoded、 multipart / form - data、 text / plain ``
-`
+Content - Type： 只限于三个值application / x - www - form - urlencoded、 multipart / form - data、 text / plain 
 
 (3)、简单请求
 
 3.1基本流程 
 
 对于简单请求，直接在头部信息里加一个Origin字段
-`
-``
+
 GET / cors HTTP / 1.1
 Origin: http: //api.bob.com
   Host: api.alice.com
 Accept - Language: en - US
 Connection: keep - alive
 User - Agent: Mozilla / 5.0...
-``
-`
 
 如果Origin指定的源不在许可范围内，服务器会返回一个正常的HTTP回应，浏览器发现回应的头信息里没有 Access-Control-Allow-Origin字段，
 抛出错误，被onerror回调函数捕获，这种错误无法被状态码识别。
 
 如果允许：
-`
-``
+
 Access - Control - Allow - Origin: http: //api.bob.com
   Access - Control - Allow - Credentials: true //是否允许发送Cookie，默认不发送
 Access - Control - Expose - Headers: FooBar //增添额外的header信息
 Content - Type: text / html;
-charset = utf - 8 ``
-`
+charset = utf - 8 
+
 3.2 withCredentials 属性
 
 CORS默认不发送Cookie和HTTP认证信息，如果要发送cookie需要双方支持
@@ -651,8 +598,7 @@ PUT,DELETE ,Content-Type字段的类型是application/json。
 
 会多一个步骤，HTTP查询请求 preflight
 
-`
-``
+
 OPTIONS / cors HTTP / 1.1
 Origin: http: //api.bob.com
   Access - Control - Request - Method: PUT
@@ -661,8 +607,7 @@ Host: api.alice.com
 Accept - Language: en - US
 Connection: keep - alive
 User - Agent: Mozilla / 5.0...
-``
-`
+
 
 服务器收到"预检"请求以后，检查了Origin、Access-Control-Request-Method和Access-Control-Request-Headers字段以后，确认允许跨源请求，就可以做出回应。
 
@@ -686,8 +631,7 @@ Access-Control-Allow-Origin: *
 4.3 浏览器的正常请求和回应
 一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个Origin头信息字段。服务器的回应，也都会有一个Access-Control-Allow-Origin头信息字段。
 下面是"预检"请求之后，浏览器的正常CORS请求。
-`
-``
+
 PUT / cors HTTP / 1.1
 Origin: http: //api.bob.com
   Host: api.alice.com
@@ -695,18 +639,15 @@ X - Custom - Header: value
 Accept - Language: en - US
 Connection: keep - alive
 User - Agent: Mozilla / 5.0...
-``
-`
+
 上面头信息的Origin字段是浏览器自动添加的。
 下面是服务器正常的回应。
-`
-``
+
 Access - Control - Allow - Origin: http: //api.bob.com
   Content - Type: text / html;
 charset = utf - 8
 
-  ``
-`
+
 上面头信息中，Access-Control-Allow-Origin字段是每次回应都必定包含的。
 
 
