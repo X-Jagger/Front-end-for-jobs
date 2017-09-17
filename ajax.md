@@ -476,7 +476,7 @@ localStorage.removeItem(payload.key);
 
 1.架设服务器代理，浏览器请求同源服务器，再由后者请求外部服务
 2.JSONP
-3.WebSocker
+3.WebSocket
 4.CORS
 
 
