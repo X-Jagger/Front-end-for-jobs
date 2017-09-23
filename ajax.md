@@ -151,19 +151,80 @@ new Promise(
 
   resolve, reject就是通过then() 来添加的, 异步成功的结果传给resolve也就是传给了then的第一个函数, reject里的结果传给then() 的第二个参数 函数外： - 引用函数获得promise对象 - 用then() 绑定成功和失败的事件处理 `
 
-var promise = new Promise(function(resolve, reject) {
-  if ( /*异步成功*/ ) {
-    resolve(value);
-  } else {
-    reject(error)
-  }
-});
+  封装一个get请求：
+```
+var url = 'https://hq.tigerbrokers.com/fundamental/finance_calendar/getType/2017-02-26/2017-06-10';
 
-promise.then(function(value) {
-  //success
-}, function(error) {
-  //failure
-})
+// 封装一个get请求的方法
+function getJSON(url) {
+    return new Promise(function(resolve, reject) {
+        var XHR = new XMLHttpRequest();
+        XHR.open('GET', url, true);
+        XHR.send();
+
+        XHR.onreadystatechange = function() {
+            if (XHR.readyState == 4) {
+                if (XHR.status == 200) {
+                    try {
+                        var response = JSON.parse(XHR.responseText);
+                        resolve(response);
+                    } catch (e) {
+                        reject(e);
+                    }
+                } else {
+                    reject(new Error(XHR.statusText));
+                }
+            }
+        }
+    })
+}
+
+getJSON(url).then(resp => console.log(resp));
+
+
+封装一个jsonp：
+
+var jsonp = (function(window) {
+
+  var CALLBACK_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+  return function jsonp(url, options) {
+    options = options || {};
+    options.timeout = options.timeout || 5000;
+
+    return new Promise(function(resolve, reject) {
+      var callback;
+      while (!callback || window[callback] !== undefined) {
+        callback = 'JSONP_';
+        for (var i = 0; i < 10; i++) {
+          callback += CALLBACK_CHARS[Math.random() * CALLBACK_CHARS.length | 0];
+        }
+      }
+
+      var script = document.createElement('script');
+      script.src = url + callback;
+      document.getElementByTagName('head')[0].appendChild(script);
+
+      function cleanup() {
+        delete window[callback];
+        script.parentNode.removeChild(script);
+      }
+
+      var ticket = setTimeout(function() {
+        reject('no response');
+        cleanup();
+      }, options.timeout);
+
+      window[callback] = function(data) {
+        resolve(data);
+        clearTimeout(ticket);
+        cleanup();
+      };
+    });
+  }
+
+})(window);
+```
 
 
   注意
