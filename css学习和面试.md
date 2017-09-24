@@ -57,6 +57,7 @@ Webkit 内核的浏览器，必须加上-webkit前缀。
     flex-basis:auto 
     其实就是flex:auto;
 
+只有父元素定义flex，子元素定义margin:auto：
 ### 二、BFC & IFC
 
 #### BFC Block Formatting Context块格式上下文
@@ -152,6 +153,45 @@ Webkit 内核的浏览器，必须加上-webkit前缀。
 
 
 ### 三、垂直水平居中
+
+一. 文本的水平垂直居中
+
+line-height + text-align:center  
+
+二. 利用盒模型的水平垂直居中
+
+- padding填充 
+     padding: (@wrapWidth - @contentWidth) / 2
+- margin填充 
+    margin-left: auto;
+    margin-right: auto; //前两个实现水平居中
+    margin-top: (@wrapHeight - @contenHeight) / 2
+
+三. absolute布局上下文下的水平垂直居中
+
+- 50% + -50%
+     left: 50% 将盒子置于父容器的重点，然后将盒子向左偏移盒子自身宽度的50%;
+     ```
+     1.{
+      width: 200px;
+      height: 100px;
+      margin-left: -100px;
+      margin-top: -50px;
+    }
+
+    2.{
+      transform:translate3d(-50%, -50%, 0);
+    }
+    3.
+     ```
+- text-align:center + absolute
+- absolute + margin : auto
+
+六.IFC布局上下文下的水平垂直居中
+IFC又是个什么概念呢，你可以看看官方文档，也可以简单的理解为 display为inline性质的行级元素的布局。
+
+text-align:center + vertical-align:middle
+
 
 ### 四、CSS画圆画三角形等
 
