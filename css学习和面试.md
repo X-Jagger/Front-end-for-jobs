@@ -58,6 +58,7 @@ Webkit 内核的浏览器，必须加上-webkit前缀。
     其实就是flex:auto;
 
 只有父元素定义flex，子元素定义margin:auto：
+
 ### 二、BFC & IFC
 
 #### BFC Block Formatting Context块格式上下文
@@ -200,3 +201,89 @@ text-align:center + vertical-align:middle
 ### 六、雪碧图
 
 ### 七、CSS的一些性能优化
+
+### 八、三栏布局 (一些自适应实现/四栏均分布局/响应式布局/响应式布局的兼容性解决)
+
+1.左右定宽中间
+
+- (1) Position固定位置实现
+```
+position:absolute;left:0;right:0;width:200px 
+margin 0 200px;
+
+```
+- (2).纯float实现，中间的div要放在HTML结构的最后/ 可以加BFC实现间隔或者不加 直接在中间Margin上实现间隔
+```
+.left{
+  width: 200px;height:500px; float:left; background-color: red;
+  margin-left:-200px;
+}
+.right{
+  width: 200px;height:500px;float:right;background-color: blue;
+  margin-right:-200px;
+}
+.mid{
+  height:500px;margin:0 200px 0 200px;background-color: green;
+}
+```
+
+- (3).float和BFC配合圣杯布局  不好用-。-
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .content {
+        float: left;
+        width: 100%;
+        }
+        .main {
+        height: 200px;
+        margin-left: 110px;
+        margin-right: 220px;
+        background-color: green;
+        }
+  .left {
+      float: left;
+      height: 200px;
+      width: 100px;
+      margin-left: -100%;
+      background-color: red;
+  }
+  .right {
+      width: 200px;
+      height: 200px;
+      float: right;
+      margin-left: -200px;
+      background-color: blue;
+  } 
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="main"></div>
+    </div>
+    <div class="left"></div>
+    <div class="right"></div>
+</body>
+</html>
+```
+- (4).flex布局
+
+外部容器display:flex,justify-content:space-between; 中间 width:100%
+```
+.left{
+  width: 200px;height:500px;background-color: red;
+}
+.right{
+  width: 200px;height:500px;background-color: blue;
+}
+.mid{
+  width:100%;height:500px;margin: 0 10px ;background-color: green;
+}
+.main{
+  display: flex;justify-content: space-around;
+}
+```
+
+
