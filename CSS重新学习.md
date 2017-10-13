@@ -73,6 +73,100 @@ h2 ~ p {//所有和h2是兄弟的p
 
 - Pseudo-classes and pseudo-elements伪类伪元素选择器
 
+(1).伪类：  以:开头的，选择某一个状态的elements
+``` 
+link — :visited — :hover — :active按照这个顺序来定义规则
+
+:link 表示没有被访问的链接，用在带有href属性的a,area,link
+
+:visited 表示被访问的链接
+
+:hover 鼠标划过的elements
+
+:active 表示被用户激活,多用到a,button a:active{color:red;}
+
+:any 选择任何一个满足条件的selector  
+    :-moz-any(section, article, aside, nav) h1 {
+      font-size: 25px;
+    }
+
+:checked 表示被选择的  radio (<input type="radio">), checkbox (<input type="checkbox">), or option (<option> in a <select>) 
+单独使用不加前缀表示所有被选择的...
+
+:default 表示任何是默认值的表单元素（原始被选中等等）,用在button,checkbox,radio,option
+
+:dir(rtl/ltr)：表示不同方向的文本
+
+:disabled 表示被disabled的元素
+
+:empty 没有children的任何元素（空白也可看成拥有children）
+
+:enabled 除disabled外的可以被激活的元素(包括可以focus的)：selected,clicked on,typed into,etc.
+
+:first @page :first这样使用 表示被打印的第一页
+
+:left @page :left  represents all left-hand pages of a printed document.
+
+:right 
+
+:first-child 兄弟元素中的第一个元素(不管啥types)
+
+:last-child
+
+:last-of-type
+
+:first-of-type p:first-of-type 兄弟元素中的第一个特定种类的元素
+
+:fullscreen div:fullscreen 代表全屏下的某个种类的元素
+
+:focus 表示被focus住的元素(选中表单元素，clicks,taps 或者用"tab"选中)
+
+:focus-within 自己被focus或者有个被focus的后代
+
+:indeterminate 表示状态是indeterminate的表单元素
+    <input type="checkbox"> elements whose indeterminate attribute is set to true by JavaScript
+    <input type="radio"> elements, when all radio buttons with the same name value in the form are unchecked
+    <progress> 进度条
+
+:in-range 用在input带有min max属性中，值在他们中间的元素
+
+:out-of-range 用在input带有min max属性中，值在他们之外的元素
+
+:invalid 表示input,form元素内容未经过validate（url,email验证等）
+
+:lang()
+
+:not() :not(p) 所有的非X元素，里面只能放一个selector
+
+:nth-child() :nth-child(4n) ：4，8，12在一组siblings中选择every fourth element
+              :nth-child(-n+3) 前三个
+:nth-last-child() :nth-last-child(4n) 在一组siblings中倒数开始选
+
+:nth-last-of-type() p:nth-last-of-type(4n)
+
+:nth-of-type() p:nth-of-type(4n) 在siblings中选择every fourth <p> element
+
+:only-child 独生子元素
+
+:only-of-type p:only-of-type  特定类型的独生子
+
+:optional 所有没有required属性的input,select,textarea
+
+:read-only 只读元素<input type="text" readonly>
+
+:read-write 可读可写
+
+:required 带有这个元素的..input select textarea
+
+:root 表示document的根元素
+
+:scope
+
+:target
+
+:valid
+
+```
 - Pseudo-elements
 
 - Combinators
