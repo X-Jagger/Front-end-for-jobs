@@ -160,15 +160,65 @@ link — :visited — :hover — :active按照这个顺序来定义规则
 
 :root 表示document的根元素
 
-:scope
+:target <a href="#p1"> p:target{} 选择url中带#id那部分element
 
-:target
-
-:valid
+:valid 任何通过合格验证的input,form
 
 ```
-- Pseudo-elements
 
-- Combinators
+- Pseudo-elements 创建伪元素
+```
+::after 在选择的element的最后创造一个inline伪元素,用content来指定内容
+        a::after {
+          content: "→";
+        }
 
-- Multiple selectors
+::before 和上者相反
+
+::first-letter apply styles to块元素的第一行的第一个字母(前面不能有images or inline tables)
+
+::first-line 
+
+::selection 被用户选出的突出的部分
+        可以应用的CSS只有以下：color,background-color,cursor,outline,text-decoration,text-shadow
+
+```
+
+##### 2.CSS values and units
+
+- 数字
+- 百分比
+- 颜色
+- 坐标位置
+- 函数
+
+(1).数字
+Length and size:
+```
+mm,cm,in
+pt,pc
+ex,ch x的高,0的宽(支持不好)
+em
+rem
+vw,vh 1/100视口宽高
+```
+
+Unitless values无单位数字
+```
+line-height：1.5 表示乘以的倍数
+```
+
+Number of animations
+```
+animation-iteration-count: 5
+```
+
+(2).百分比
+width,height : parent element
+margin,padding : parent's width
+
+(3).颜色
+Keywords　red
+16进制值　#ff0000
+RGB rgb(255,0,0)
+Opacity 不透明度
