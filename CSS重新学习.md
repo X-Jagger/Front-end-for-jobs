@@ -222,3 +222,110 @@ Keywords　red
 16进制值　#ff0000
 RGB rgb(255,0,0)
 Opacity 不透明度
+
+(3).Functions
+```
+/* calculate the new position of an element after it has been rotated by 45 degress */
+transform: rotate(45deg);
+/* calculate the new position of an element after it has been moved across 50px and down 60px */
+transform: translate(50px, 60px);
+/* calculate the computed value of 90% of the current width minus 15px */
+width: calc(90%-15px);
+/* fetch an image from the network to be used as a background image */
+background-image: url('myimage.png');
+
+```
+
+##### 3.Cascade and inheritance 层叠和继承
+
+###### 3.1CSS优先级判断:
+
+- Importance
+- Specificity
+- Source order
+
+(1)!important 最高优先级
+```
+.better {
+  border: none !important;
+}
+```
+
+(2).specificity
+>Universal selector (*), combinators (+, >, ~, ' ') and negation pseudo-class (:not) have no effect on specificity.
+
+计算特异性总数:
+ones 1 :tagname,伪元素(::xx)
+tens 10:class,属性选择器([href=..]),伪类(:X)
+hundreds 100:id
+thousands 1000:style属性里的
+```
+h1  0001
+#important   0100
+h1 + p::first-letter   0003
+li > a[href=*"en-US"] > .inline-warning 0022
+#important div > div > a:hover, inside an element's style attribute 1113
+
+```
+
+(3).source order
+如果前两个一样，那么后面的css覆盖前面的
+
+###### 3.2 Inheritance
+
+有些属性会被继承，有些不会。
+
+控制继承的三个值
+- inherit：继承父亲
+- initial：浏览器默认|inherit
+- unset：inherit | initial
+```
+body {
+  color: green;
+}
+.inherit a { //绿
+  color: inherit;
+}
+.initial a {//默认黑
+  color: initial
+}
+.unset a {//继承 绿
+  color: unset;
+}
+```
+
+##### 4.The box model
+
+###### 4.1一些属性:
+
+(1)overflow:
+auto：scroll  
+hidden 
+visible
+ (2).background clip
+背景由颜色和图片构成，默认extends to the outer edge of the border
+,可以用background-clip来剪切
+```
+.default     { background-clip: border-box;  }
+.padding-box { background-clip: padding-box; }
+.content-box { background-clip: content-box; }
+```
+(3)outline
+
+类似border,不过不会改变border的参数
+```
+{ outline: 1px solid #000; }
+```
+
+###### 4.2 Types of CSS boxes
+
+(1)类型由display控制
+
+(2)block,inline,inline-block
+
+inline:在一行，width,height设置无用，padding,margin只会影响周围的text，border有效果但是不会影响block元素
+
+inline-block:能设置width,height,盒子不会被broken的inline元素，占位和inline一样，一行一行的，设置了width,height还是保持那个盒子
+
+-------
+### Styling text
