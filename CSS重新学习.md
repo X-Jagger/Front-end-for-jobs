@@ -1,6 +1,6 @@
 ## 跟着MDN开始重新过一遍CSS
 
-### Introduction to CSS
+### 一、Introduction to CSS
 
 #### CSS syntax
 
@@ -328,4 +328,74 @@ inline:在一行，width,height设置无用，padding,margin只会影响周围�
 inline-block:能设置width,height,盒子不会被broken的inline元素，占位和inline一样，一行一行的，设置了width,height还是保持那个盒子
 
 -------
-### Styling text
+### 二、Styling text
+
+- Fundamental text and font styling
+- Styling lists
+- Styling links
+- Web fonts
+
+##### 1.Fundamental text and font styling
+- 1.1 Font styles
+- 1.2 Text layout styles
+
+###### 1.1.Fonts
+
+(1).color: 
+
+(2).font-family 
+
+web safe fonts: Arial,Courier New,Georgia,Times New Roman
+
+generic fonts: serif, sans-serif, monospace, cursive,and fantasy.
+
+font stacks, font的名字如果不止一个词，则要加引号
+```
+p {
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+```
+
+(3).font-size 
+
+em,rem,px
+
+(4).font style,weight,text transform, text decoration
+```
+font-style:斜体=>on or off
+    normal 
+    italic 斜体
+    oblique 模拟的倾斜
+
+font-weight: 字体粗细
+    normal,bold:一般和粗体
+    lighter,bolder:
+    100-900
+
+text-transform:转换字体
+    none:避免任何转换
+    uppercase,lowercase 
+    capitalize 所有首字母大写
+    full-width 
+
+text-decoration 字体装扮划线(线的位置,样式，颜色)
+    none 去除所有decoration
+    underline 下划线
+    overline 上划线
+    line-through 删除线
+```
+(5). 阴影
+
+
+
+
+###### 1.2.Fonts
+
+##### 2.Styling lists
+
+
+##### 3.Styling links
+
+
+
+##### 4.Web fonts
