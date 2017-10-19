@@ -385,17 +385,206 @@ text-decoration 字体装扮划线(线的位置,样式，颜色)
     line-through 删除线
 ```
 (5). 阴影
+```
+text-shadow: 4px 4px 5px red;
+(水平偏移，垂直偏移，模糊半径默认为0，颜色默认为black) 前两个可以为负数值
+text-shadow: -1px -1px 1px #aaa,
+             0px 4px 1px rgba(0,0,0,0.5),
+             4px 4px 5px rgba(0,0,0,0.7),
+             0px 0px 7px rgba(0,0,0,0.4);
+```
 
+###### 1.2.Text layout styles
 
-
-
-###### 1.2.Fonts
-
+(1).text-align
+```
+left: Left justifies the text.
+right: Right justifies the text.
+center: Centers the text.
+justify:排版，使用不同的gaps使每一行text长度相同
+```
+(2).line-height
+```
+line-height: 1.5;/*倍数*/
+line-height: 15px;
+```
+(3).letter-spacing & word-spacing
+字母，单词间隔
+```
+p::first-line {
+  letter-spacing: 2px;
+  word-spacing: 4px;
+}
+```
+(4).white-space 
+```
+**          New lines   Spaces and tabs Text wrapping**
+normal      Collapse        Collapse    Wrap
+nowrap      Collapse        Collapse    No wrap
+pre         Preserve        Preserve    No wrap
+pre-wrap    Preserve        Preserve    Wrap
+pre-line    Preserve        Collapse    Wrap
+```
 ##### 2.Styling lists
 
+###### 三种lists
+```
+<ul><li></li></ul>
+<ol><li></li></ol>
+<dl>
+<dt></dt>
+  <dd></dd>
+</dl>
+
+都有其默认的样式:
+ul,ol {
+    margin:16px,0;
+    padding-left:40px;
+}
+dl{
+    margin:16px,0;
+}
+dd{
+    padding-left:40px
+}
+p{
+    margin:16px,0;
+}
+```
+###### 2.1 Handling list spacing 解决默认空格问题
+
+[text styling and spacing exampl](https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Styling_lists)
+
+###### 2.2 List-specific styles 特别列表风格
+
+用在ul,ol上的
+
+list-style-type: 标号的种类
+
+list-style-position: 位置，在list items里还是在外
+
+list-style-image:用自定义图片代替
+```
+ol {
+  list-style-type: upper-roman;
+  list-style-position: inside;(整个list items会向右一点)
+  list-style-image: url(star.svg); //限制较多，如控制位置大小,不好用
+}
+```
+完整的自定义图片顶替标号，用background-image
+```
+ul {
+  padding-left: 2rem;
+  list-style-type: none;
+}
+
+ul li {
+  padding-left: 2rem;
+  background-image: url(star.svg);
+  background-position: 0 0;
+  background-size: 1.6rem 1.6rem;
+  background-repeat: no-repeat;
+}
+```
+缩写：
+```
+ul {
+  list-style: square url(example.png) inside;
+}
+```
+
+###### 2.3 Controlling list counting 控制计数
+
+(1).start属性 
+```
+<ol start="4">
+  <li>Toast pitta, leave to cool, then slice down the edge.</li>
+  <li>Fry the halloumi in a shallow, non-stick pan, until browned on both sides.</li>
+</ol>
+```
+(2).reversed 倒序 (可以为负数)
+(3).value 自己设定数字
+```
+<ol>
+  <li value="2">Toast pitta, leave to cool, then slice down the edge.</li>
+  <li value="4">Fry the halloumi in a shallow, non-stick pan, until browned on both sides.</li>
+</ol>
+```
 
 ##### 3.Styling links
 
+###### 5 Link states
+(1).
+- :link(unvisited)
+- :visited :同一个href访问了都会变紫色
+- :hover (鼠标划过)
+- :focus (Tap)
+- :active (点下的那一下)
+
+(2).default styles
+- Links are underlined.
+- Unvisited links are blue.
+- Visited links are purple.
+- Hovering a link makes the mouse pointer change to a little hand icon.
+- Focused links have an outline around them (Tap)
+- active links are red; 
+```
+//注意这个outline,类似border
+a {
+  outline: none; 
+  text-decoration: none;
+}
+```
+
+(3).Including icons on links 加图标
+```
+a[href*="http"] {
+  background: url('https://mdn.mozillademos.org/files/12982/external-link-52.png') no-repeat 100% 0; (x，y的位置相对于左边)
+  background-size: 16px 16px;
+  padding-right: 19px;
+}
+```
+(4) Styling links as buttons
+```
+ul {
+  padding: 0; //去除列表默认的Padding-left：40px
+  width: 100%;
+}
+
+li {
+  display: inline; //默认是block,分行排, 同时去掉前面的点
+}
+
+a {
+  outline: none;
+  text-decoration: none;
+  display: inline-block;//默认为inline,设为可以自定义宽度的inline元素
+  width: 19.5%; 
+  margin-right: 0.625%;
+  text-align: center;
+  line-height: 3;
+  color: black;
+}
+
+li:last-child a {
+  margin-right:0; //最后一个不需要右边距
+```
 
 
 ##### 4.Web fonts
+
+```
+@font-face {
+  font-family: "myFont";
+  src: url("myFont.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html {
+  font-family: "myFont", "Bitstream Vera Serif", serif;
+}
+```
+
+-------
+### 三、Styling boxes
