@@ -312,7 +312,8 @@ visible
 ```
 (3)outline
 
-类似border,不过不会改变border的参数
+类似border,不过不会改变border的参数,不属于box model
+显示在box的top
 ```
 { outline: 1px solid #000; }
 ```
@@ -588,3 +589,162 @@ html {
 
 -------
 ### 三、Styling boxes
+
+- Box model recap
+- Backgrounds
+- Borders
+- Styling tables
+- Advanced box effects
+
+#### 3.1 Box model recap
+
+- Box properties
+- Advanced box properties
+- Box display types
+
+##### 3.1.1 Box properties
+
+(1) width,height 设置的content box的宽高
+(2) box heights 不遵守百分比规则，总是随box content的高度，除非设定px,em 
+(3) border 也忽略百分比
+(4) margin有 margin崩塌
+
+##### 3.1.2 Advanced box properties
+
+(1). max-width,min-width等
+
+应用：自适应居中
+```
+width: 70%;
+max-width: 1280px;
+min-width: 480px;
+margin: 0 auto; <!-- 水平居中 --> 
+<!-- 效果是开始占据整个一行，超过1280px后水平居中 -->
+```
+针对图片的宽度和布局
+```
+display: block;
+margin: 0 auto;
+max-width: 100%;
+```
+
+(2).使用border-box
+##### 3.1.3 Box display types 
+
+- block
+- inline
+- inline-block
+- table
+- flex
+- grid
+
+#### 3.2 Backgrounds
+
+是一个元素的content,padding,border下的区域，不包括margin
+
+##### 3.2.1 The basics: color, image, position, repeat
+
+(1) Background color
+
+- 默认背景颜色是透明而不是白色
+-都应该设定背景颜色，因为有些背景图片
+可能无法显示，这时候就需要一个背景颜色 to make it more readable
+
+(2) Background image
+
+默认repeat横向完了纵向
+```
+background-image: url(..)
+```
+(3) Background repeat
+
+- no-repeat
+- repeat-x
+- repeat-y
+
+(4) Background position
+
+background-position: x y (坐标位置) 可以是px,rem,%,center..
+```
+background-position: 99% center;
+```
+##### 3.2.2 Background image: gradients(梯度)
+
+流畅的颜色改变---像梯子一样
+
+linear-gradient 一个方向向另一个方向
+```
+background-image: linear-gradient(to bottom, yellow, #dddd00 50%, orange);
+// 或者用degree values, 0deg === top 90deg === right
+```
+
+##### 3.2.3 Background attachment
+
+控制当content滚动的时候，背景如何动
+
+值：
+- scroll 随page视窗滚动而滚动，而不是随element
+- fixed 不动，就在原来的位置
+- local 随element,page滚动而滚动,就是跟随element
+
+##### 3.2.3 Multiple backgrounds
+
+背景从上而下叠加摆放
+```
+background: url(image.png) no-repeat 99% center,
+            url(background-tile.png),
+            linear-gradient(to bottom, yellow, #dddd00 50%, orange);
+background-color: yellow;
+```
+
+##### 3.2.4 Background size (IE 9)
+```
+background-size: 16px 16px; (水平垂直方向)
+```
+
+#### 3.3 Borders
+- border-top, border-right, border-bottom, border-left
+- border-width, border-style, border-color
+- border-color 
+- border-style
+    solid,dashed虚线,dotted
+- border-radius
+    20px(左上右下) 10px;()
+    20px(左上) 10px 50px(右下);
+
+#### 3.4 Styling tables //不要用这个布局
+
+#### 3.5 Box shadows, blend modes and filters
+
+(1)Box shadows
+
+初
+```
+box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+水平移动 垂直移动 模糊半径 shadow颜色
+
+```
+
+inset:放在那四个值前，代表inner内部shadow
+```
+  box-shadow: 1px 1px 1px black,
+              inset 2px 3px 5px rgba(0,0,0,0.3),
+```
+
+(2) Filters 
+
+举例应用,二者对比,filter可以应用到box里面的内容，
+box-shadow只能应用到box外面
+```
+.filter {
+  -webkit-filter: drop-shadow(5px 5px 1px rgba(0,0,0,0.7));
+  filter: drop-shadow(5px 5px 1px rgba(0,0,0,0.7));
+}
+
+.box-shadow {
+  box-shadow: 5px 5px 1px rgba(0,0,0,0.7);
+}
+```
+
+(3) Blend modes 混合
+
