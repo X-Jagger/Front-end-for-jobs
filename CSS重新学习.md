@@ -324,7 +324,7 @@ visible
 
 (2)block,inline,inline-block
 
-inline:在一行，width,height设置无用，padding,margin只会影响周围的text，border有效果但是不会影响block元素
+inline:在一行，width,height设置无用，padding,margin只会影响周围的text(margin-left right这种才有影响)，border有效果但是不会影响block元素
 
 inline-block:能设置width,height,盒子不会被broken的inline元素，占位和inline一样，一行一行的，设置了width,height还是保持那个盒子
 
@@ -747,4 +747,107 @@ box-shadow只能应用到box外面
 ```
 
 (3) Blend modes 混合
+
+### 四 、CSS layout
+- Introduction to CSS layout
+- Floats
+- Positioning
+- Practical positioning examples
+- Flexbox
+- Grids
+
+#### 4.1 Introduction to CSS layout
+#### 4.2 Floats
+
+(1) float会改变显示的顺序
+
+```
+有两个float:right,前一个到最右边，后一个在前一个的左边那
+```
+
+(2).float之间的间隔是left和right之间的
+```
+三栏布局 36+30+4+26 = 96 留了4%的间隔
+
+div:nth-of-type(1) {
+  width: 36%;
+  float: left;
+}
+
+div:nth-of-type(2) {
+  width: 30%;
+  float: left;
+  margin-left: 4%;
+}
+
+div:nth-of-type(3) {
+  width: 26%;
+  float: right;
+}
+```
+(3). clear : both,left,right
+
+(4)float problems
+- 高度宽度: floated elements 没有高度,BFC
+    解决:用border-box
+- 其余的元素紧贴floated elements
+    解决:再添加一个div,clear:both
+- 高度不一致
+    解决：设定固定高度
+
+#### 4.3 Positioning
+
+(1).
+block,100%parent宽,和content同高
+inline: 和content同宽高
+
+(2)normal layout flow 
+
+(3) position:absolute 默认基于html
+
+可以修改它的positioning context: 
+基于它的一个positioned父本设置position:relative/absolute即可
+
+(4)z-index
+html中后面的覆盖前面的
+
+默认都是0，高的值在上面
+
+(5) fixed 
+
+基于浏览器视窗的位置
+#### 4.4 Practical positioning examples
+#### 4.5 Flexbox
+
+为了解决以前用float和position很难解决的布局问题
+- 垂直居中
+- 所有子元素均匀分布
+- 使多列布局有相同的高度(即使内容量不同)
+
+(1).flex: 设置比例，最小大小(flex-basis)
+```
+flex: 1 200px 
+
+flex:2 200px;
+
+会先给予200px的空间，剩余的按照比例 1:2来分配
+```
+
+(2) 
+
+align-items 垂直方向
+
+justify-content： 垂直方向
+
+(3) ordering flex items
+
+默认的order都是0，值大的排在后面,相同大的按照html中的顺序出现
+```
+button:first-child{
+    order:1;
+}
+```
+
+(4)碰到的坑：flex可以缩放的效果使得当屏幕缩放特别多时，上面的按钮会接触下方的文字，导致按钮点不到，为什么会出现没有空间但是还是会分配空间的情况？
+#### 4.6 Grids
 

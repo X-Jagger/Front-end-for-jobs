@@ -286,4 +286,42 @@ margin 0 200px;
 }
 ```
 
+flex实现两端固定 中间自适应
 
+```
+.demo{
+  /*flex布局（作用于容器）*/
+  display: flex;
+ 
+  /*项目拉伸对齐，也就是所左边的高度为拉伸到和右边底部对齐*/
+  align-items: flex-end;
+}
+ 
+.demo .left{
+  /*左边固定宽度，必须设置其最小宽度和最大宽度*/
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+ 
+  /*高度自由分配*/
+  height: auto;
+  background: #B4D3F7;
+ 
+  /*空白区域分配比例为0（作用于项目）*/
+  flex-grow: 0;
+}
+ 
+.demo .center{
+  margin: 0 10px;
+  width: auto;
+  height: 200px;
+  background: #F7E8B4;
+ 
+  /*空白区域分配比例为1（作用于项目）
+  左右得到的空白比例为0:1，所以右边会分配到剩余的所有空白区域，
+  左边成固定的宽度，右边为自适应宽度*/
+  flex-grow: 1;
+}
+ 
+}
+```
